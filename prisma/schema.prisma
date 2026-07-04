@@ -1,0 +1,320 @@
+// Help the World Win — data model
+//
+// Organization > Initiative > Pathway is the extensibility spine: new
+// initiatives (Help Veterans Win, etc.) and new pathways are rows, not
+// schema changes. Everything below Match enforces the minor protection
+// policy at the data layer, not just in the UI.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  APPLICANT
+  MENTOR
+  ADMIN
+  GUARDIAN
+}
+
+enum BackgroundReviewStatus {
+  NOT_STARTED
+  PENDING
+  CLEARED
+  FLAGGED
+}
+
+enum MatchStatus {
+  REQUESTED
+  ADMIN_REVIEW
+  APPROVED
+  DECLINED
+  ENDED
+}
+
+enum AssessmentType {
+  PRE_TEST
+  QUIZ
+  SKILLS_ASSESSMENT
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  mission     String
+  initiatives Initiative[]
+  createdAt   DateTime     @default(now())
+}
+
+model Initiative {
+  id             String       @id @default(cuid())
+  slug           String       @unique
+  name           String
+  tagline        String
+  status         String // flagship | active | planned
+  focus          String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  pathways       Pathway[]
+  createdAt      DateTime     @default(now())
+}
+
+model Pathway {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  name            String
+  shortDescription String
+  atmosphere      String
+  icon            String
+  tags            String[]
+  physicalDemand  String // low | moderate | high
+  initiative      Initiative @relation(fields: [initiativeId], references: [id])
+  initiativeId    String
+  assessments     Assessment[]
+  matches         Match[]
+  createdAt       DateTime  @default(now())
+}
+
+model User {
+  id               String            @id @default(cuid())
+  email            String            @unique
+  role             UserRole
+  emailAliasActive Boolean           @default(false)
+  applicantProfile ApplicantProfile?
+  mentorProfile    MentorProfile?
+  guardianOf       GuardianLink[]
+  auditLogEntries  AuditLogEntry[]
+  createdAt        DateTime          @default(now())
+}
+
+/// A guardian/parent account linked to one or more minor applicants.
+/// Required before any mentor communication can be authorized.
+model GuardianLink {
+  id          String   @id @default(cuid())
+  guardian    User     @relation(fields: [guardianId], references: [id])
+  guardianId  String
+  applicant   ApplicantProfile @relation(fields: [applicantId], references: [id])
+  applicantId String
+  consentedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@unique([guardianId, applicantId])
+}
+
+model ApplicantProfile {
+  id                       String              @id @default(cuid())
+  user                     User                @relation(fields: [userId], references: [id])
+  userId                   String              @unique
+  displayName              String
+  dateOfBirth              DateTime?
+  isMinor                  Boolean             @default(false)
+  goals                    String?
+  interests                String[]
+  personality              Json?
+  skills                   String[]
+  education                String?
+  certifications           String[]
+  accomplishments          String[]
+  availability             String?
+  physicalRequirementsAck  Boolean             @default(false)
+  transportation           String?
+  city                     String?
+  state                    String?
+  zip                      String?
+  resumeUrl                String?
+  readinessScore           Float?
+  guardianLinks            GuardianLink[]
+  recommendations          PathwayRecommendation[]
+  assessmentResults        AssessmentResult[]
+  matches                  Match[]
+  createdAt                DateTime            @default(now())
+}
+
+model PathwayRecommendation {
+  id          String           @id @default(cuid())
+  applicant   ApplicantProfile @relation(fields: [applicantId], references: [id])
+  applicantId String
+  pathwaySlug String
+  rank        Int // 1, 2, or 3
+  confidence  Float
+  explanation String
+  lockedIn    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+}
+
+model MentorProfile {
+  id                      String                 @id @default(cuid())
+  user                    User                   @relation(fields: [userId], references: [id])
+  userId                  String                 @unique
+  displayName             String
+  biography               String
+  experienceYears         Int                    @default(0)
+  certifications          String[]
+  careerSpecialties       String[]
+  teachingSpecialties     String[]
+  availability            String?
+  maxApprentices          Int                    @default(1)
+  employer                String?
+  accomplishments         String[]
+  identityVerified        Boolean                @default(false)
+  credentialsVerified     Boolean                @default(false)
+  backgroundReviewStatus  BackgroundReviewStatus @default(NOT_STARTED)
+  approvedByAdmin         Boolean                @default(false)
+  matches                 Match[]
+  createdAt               DateTime               @default(now())
+}
+
+model Assessment {
+  id          String             @id @default(cuid())
+  pathway     Pathway            @relation(fields: [pathwaySlug], references: [slug])
+  pathwaySlug String
+  type        AssessmentType
+  title       String
+  maxScore    Float
+  results     AssessmentResult[]
+  createdAt   DateTime           @default(now())
+}
+
+model AssessmentResult {
+  id           String           @id @default(cuid())
+  applicant    ApplicantProfile @relation(fields: [applicantId], references: [id])
+  applicantId  String
+  assessment   Assessment       @relation(fields: [assessmentId], references: [id])
+  assessmentId String
+  score        Float
+  completedAt  DateTime         @default(now())
+}
+
+/// A Match must satisfy every minor-protection flag before communication
+/// is authorized. See src/lib/safety/minorProtection.ts for the runtime gate.
+model Match {
+  id                       String       @id @default(cuid())
+  applicant                ApplicantProfile @relation(fields: [applicantId], references: [id])
+  applicantId              String
+  mentor                   MentorProfile    @relation(fields: [mentorId], references: [id])
+  mentorId                 String
+  pathway                  Pathway          @relation(fields: [pathwaySlug], references: [slug])
+  pathwaySlug              String
+  status                   MatchStatus      @default(REQUESTED)
+  guardianConsent          Boolean          @default(false)
+  adminApproval            Boolean          @default(false)
+  mentorVerified           Boolean          @default(false)
+  backgroundReviewCleared  Boolean          @default(false)
+  communicationAuthorized  Boolean          @default(false)
+  workspace                Workspace?
+  requestedAt              DateTime         @default(now())
+  approvedAt               DateTime?
+}
+
+model Workspace {
+  id          String      @id @default(cuid())
+  match       Match       @relation(fields: [matchId], references: [id])
+  matchId     String      @unique
+  tasks       Task[]
+  milestones  Milestone[]
+  messages    Message[]
+  notes       Note[]
+  files       WorkspaceFile[]
+  certificates Certificate[]
+  progress    Float       @default(0)
+  createdAt   DateTime    @default(now())
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  title       String
+  completed   Boolean   @default(false)
+  dueDate     DateTime?
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  title       String
+  completed   Boolean   @default(false)
+  dueDate     DateTime?
+}
+
+/// Every message is stored permanently for administrator audit —
+/// this is the Stage 1 internal-messaging safety requirement.
+model Message {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  senderId    String
+  body        String
+  flagged     Boolean   @default(false)
+  sentAt      DateTime  @default(now())
+}
+
+model Note {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  authorId    String
+  body        String
+  createdAt   DateTime  @default(now())
+}
+
+model WorkspaceFile {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  fileName    String
+  url         String
+  uploadedById String
+  uploadedAt  DateTime  @default(now())
+}
+
+model Certificate {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+  title       String
+  pathwaySlug String
+  issuedAt    DateTime  @default(now())
+}
+
+/// Immutable log of every administrative and communication-relevant
+/// action, satisfying the "administrators can audit communication" and
+/// "review communication logs" requirements.
+model AuditLogEntry {
+  id          String   @id @default(cuid())
+  actor       User     @relation(fields: [actorId], references: [id])
+  actorId     String
+  action      String
+  targetType  String
+  targetId    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+/// Stage-2 platform-managed email alias (e.g. ImprovMX) — personal
+/// addresses are never exposed by default.
+model EmailAlias {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  alias      String   @unique
+  provider   String   @default("improvmx")
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+/// A report of misconduct against a match/user, reviewed by an admin.
+model MisconductReport {
+  id          String    @id @default(cuid())
+  matchId     String?
+  reporterId  String
+  subjectId   String
+  details     String
+  status      String    @default("open") // open | investigating | resolved
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+}

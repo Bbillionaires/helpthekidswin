@@ -1,0 +1,157 @@
+/**
+ * Career pathway registry — the "doors" in the Hall of Opportunity.
+ *
+ * Every door is data, not code: to add a new pathway, add an entry here.
+ * Nothing in the hallway, intake, or admin UI needs to change.
+ */
+
+export interface CareerPathway {
+  slug: string;
+  name: string;
+  shortDescription: string;
+  atmosphere: string;
+  icon: string;
+  gradient: string;
+  glow: string;
+  musicMood: string;
+  tags: string[];
+  physicalDemand: "low" | "moderate" | "high";
+  requirements: string[];
+}
+
+export const PATHWAYS: CareerPathway[] = [
+  {
+    slug: "merchant-marine",
+    name: "Merchant Marine",
+    shortDescription: "Sail the world's shipping lanes while earning a skilled trade.",
+    atmosphere: "Salt air, groaning steel, and the horizon of open ocean.",
+    icon: "⚓",
+    gradient: "from-slate-800 via-blue-900 to-cyan-800",
+    glow: "shadow-cyan-500/40",
+    musicMood: "Deep tidal drones with distant foghorns",
+    tags: ["maritime", "travel", "engineering", "logistics"],
+    physicalDemand: "high",
+    requirements: ["MMC credential eligibility", "TWIC card eligibility", "Ability to pass a physical"],
+  },
+  {
+    slug: "longshoremen",
+    name: "Longshoremen",
+    shortDescription: "Move the world's cargo through the ports that keep it running.",
+    atmosphere: "Crane lights, container stacks, and the rhythm of the docks.",
+    icon: "🏗️",
+    gradient: "from-zinc-800 via-orange-950 to-amber-900",
+    glow: "shadow-amber-500/40",
+    musicMood: "Industrial percussion and dockyard clangs",
+    tags: ["logistics", "trades", "union", "physical"],
+    physicalDemand: "high",
+    requirements: ["Ability to pass a physical", "Local union registration eligibility"],
+  },
+  {
+    slug: "military",
+    name: "Military",
+    shortDescription: "Serve, lead, and build a disciplined foundation for life.",
+    atmosphere: "Dawn formations, structured halls, quiet resolve.",
+    icon: "🎖️",
+    gradient: "from-emerald-950 via-green-900 to-lime-900",
+    glow: "shadow-lime-500/40",
+    musicMood: "Steady drums with a solemn brass undertone",
+    tags: ["service", "leadership", "discipline", "travel"],
+    physicalDemand: "high",
+    requirements: ["Age eligibility", "ASVAB readiness", "Ability to pass a physical"],
+  },
+  {
+    slug: "police-officer",
+    name: "Police Officer",
+    shortDescription: "Protect and serve your community on the front line.",
+    atmosphere: "City lights reflected on wet pavement, a badge catching the light.",
+    icon: "🚓",
+    gradient: "from-blue-950 via-indigo-900 to-slate-800",
+    glow: "shadow-blue-500/40",
+    musicMood: "Tense strings resolving into a steady heartbeat",
+    tags: ["public-safety", "service", "leadership"],
+    physicalDemand: "high",
+    requirements: ["Background review eligibility", "Academy physical standards", "Age eligibility"],
+  },
+  {
+    slug: "firefighter",
+    name: "Firefighter",
+    shortDescription: "Run toward danger to save lives and property.",
+    atmosphere: "Ember light, brass poles, the low growl of engines idling.",
+    icon: "🚒",
+    gradient: "from-red-950 via-orange-900 to-amber-800",
+    glow: "shadow-orange-500/40",
+    musicMood: "Rising horns with an urgent, driving pulse",
+    tags: ["public-safety", "service", "physical"],
+    physicalDemand: "high",
+    requirements: ["CPAT physical eligibility", "EMT certification pathway"],
+  },
+  {
+    slug: "truck-driver",
+    name: "Truck Driver",
+    shortDescription: "Keep the country moving, one delivery at a time.",
+    atmosphere: "Endless highway, chrome grills, sunrise through a windshield.",
+    icon: "🚚",
+    gradient: "from-neutral-900 via-yellow-950 to-stone-800",
+    glow: "shadow-yellow-500/40",
+    musicMood: "Open-road guitar twang with a rolling rhythm",
+    tags: ["logistics", "travel", "independence"],
+    physicalDemand: "moderate",
+    requirements: ["CDL eligibility", "Clean driving record path", "DOT physical eligibility"],
+  },
+  {
+    slug: "construction-skilled-trades",
+    name: "Construction & Skilled Trades",
+    shortDescription: "Build the world with your hands — electrical, plumbing, carpentry, and more.",
+    atmosphere: "Scaffolding silhouettes, sparks, sawdust drifting in work-light beams.",
+    icon: "🛠️",
+    gradient: "from-stone-900 via-orange-950 to-yellow-900",
+    glow: "shadow-orange-400/40",
+    musicMood: "Rhythmic hammer-and-saw percussion",
+    tags: ["trades", "apprenticeship", "hands-on"],
+    physicalDemand: "high",
+    requirements: ["Apprenticeship program eligibility", "Ability to pass a physical"],
+  },
+  {
+    slug: "healthcare",
+    name: "Healthcare (CNA, LPN, RN)",
+    shortDescription: "Care for others through a nursing career pathway with room to grow.",
+    atmosphere: "Soft light, quiet halls, the steady beep of care being given.",
+    icon: "🩺",
+    gradient: "from-teal-950 via-cyan-900 to-sky-800",
+    glow: "shadow-teal-500/40",
+    musicMood: "Calm piano with a gentle, reassuring pulse",
+    tags: ["healthcare", "caregiving", "certification"],
+    physicalDemand: "moderate",
+    requirements: ["CNA/LPN/RN program eligibility", "Background review eligibility"],
+  },
+  {
+    slug: "cybersecurity",
+    name: "Cybersecurity",
+    shortDescription: "Defend networks and data in a career that never stops evolving.",
+    atmosphere: "Dark terminals, cascading code, a single glowing shield icon.",
+    icon: "🛡️",
+    gradient: "from-slate-950 via-emerald-950 to-teal-900",
+    glow: "shadow-emerald-500/40",
+    musicMood: "Synthetic pulses and low digital hum",
+    tags: ["technology", "certification", "remote-friendly"],
+    physicalDemand: "low",
+    requirements: ["Security+ certification pathway", "Background review eligibility"],
+  },
+  {
+    slug: "ai-architect",
+    name: "AI Architect",
+    shortDescription: "Design the intelligent systems shaping tomorrow's world.",
+    atmosphere: "A vast luminous grid, constellations of light forming and reforming.",
+    icon: "🤖",
+    gradient: "from-indigo-950 via-purple-900 to-fuchsia-900",
+    glow: "shadow-fuchsia-500/40",
+    musicMood: "Ethereal synth pads with evolving melodic motifs",
+    tags: ["technology", "engineering", "remote-friendly"],
+    physicalDemand: "low",
+    requirements: ["Programming fundamentals", "Portfolio or project pathway"],
+  },
+];
+
+export function getPathway(slug: string): CareerPathway | undefined {
+  return PATHWAYS.find((pathway) => pathway.slug === slug);
+}
