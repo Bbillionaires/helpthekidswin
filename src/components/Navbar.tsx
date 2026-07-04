@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { auth, signOut } from "@/auth";
 import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
 
-export function Navbar() {
+export async function Navbar() {
+  const session = await auth();
+
   return (
     <header className="border-b border-white/10 bg-hallway-void/95 text-white backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -23,6 +26,30 @@ export function Navbar() {
           <Link href="/admin" className="hover:text-white">
             Admin
           </Link>
+          {session?.user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-white/50">
+                {session.user.name} · {session.user.role}
+              </span>
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({ redirectTo: "/" });
+                }}
+              >
+                <button className="rounded-full border border-white/20 px-3 py-1 text-xs hover:bg-white/10">
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-full border border-hallway-gold/50 px-3 py-1 text-xs text-hallway-gold hover:bg-hallway-gold/10"
+            >
+              Sign In
+            </Link>
+          )}
         </nav>
       </div>
     </header>

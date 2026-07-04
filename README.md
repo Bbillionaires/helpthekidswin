@@ -80,6 +80,9 @@ data layer in `prisma/schema.prisma` (`Match` model) — see
 - Framer Motion for the hallway/door animations
 - Prisma schema modeling the full data model (applicants, mentors,
   matches, workspaces, messages, assessments, audit log, email aliases)
+- Auth.js (NextAuth v5) with role-based route gating via
+  `src/middleware.ts` — see `ARCHITECTURE.md` §7 for what's demo-grade
+  about this and what to replace before going live
 - A provider-agnostic seam for the LLM-powered guide and recommendation
   engine (`src/lib/ai/`)
 
@@ -87,12 +90,14 @@ data layer in `prisma/schema.prisma` (`Match` model) — see
 
 ```bash
 npm install
-cp .env.example .env   # fill in DATABASE_URL and, when ready, ANTHROPIC_API_KEY
+cp .env.example .env.local   # fill in DATABASE_URL, AUTH_SECRET (npx auth secret), and later ANTHROPIC_API_KEY
 npm run dev
 ```
 
 Open `http://localhost:3000` to see the homepage, then click through to
-the Hall of Opportunity.
+the Hall of Opportunity. Sign in at `/login` with one of the demo accounts
+listed on that page (one per role) to explore the role-gated
+applicant/mentor/admin/workspace routes.
 
 ## Roadmap
 

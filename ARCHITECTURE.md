@@ -103,22 +103,43 @@ never deleted; `flagged` supports misconduct triage via
   provider's API allows it. This is additive — Stage 1 messaging keeps
   working after Stage 2 ships.
 
-## 7. Known scaffolding gaps (intentional, documented here rather than hidden)
+## 7. Authentication & route gating
 
-- **Auth**: no session/auth provider is wired up yet. Add one (Auth.js,
-  Clerk, etc.) mapped to the `User.role` enum; every `/admin`, `/mentor`,
-  and `/workspace` route should be gated by role once it exists.
+`src/auth.ts` wires up Auth.js (NextAuth v5) with a JWT session strategy
+and a single Credentials provider. The session's `role` field
+(`UserRole`) is set in the `jwt`/`session` callbacks and drives
+`src/middleware.ts`, which redirects unauthenticated requests to
+`/login?callbackUrl=...` and wrong-role requests to `/unauthorized` for
+every path under `/admin`, `/mentor`, `/apply`, and `/workspace`.
+
+**This is demo-grade, not production-grade.** `src/lib/auth/users.ts` is a
+hardcoded list of four demo accounts (one per role) because there is no
+persisted `User` table yet (see §8). Before this touches any real
+applicant or mentor data — and especially before it touches anything a
+minor interacts with — replace it with: real password hashing (or drop
+Credentials entirely in favor of an OAuth/SSO provider), a Prisma-backed
+user lookup, and email verification. The middleware's role-gating logic
+itself (the `ROLE_GATES` table) is the part that should carry forward
+unchanged once the identity layer is real.
+
+## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
+
+- **Identity**: see §7 — the demo credential store is the main thing
+  standing between this scaffold and a real login system.
 - **Persistence**: pages currently read `src/data/mock.ts`. Swap in Prisma
   queries once `DATABASE_URL` points at a real Postgres instance; the
-  shapes in `src/types/index.ts` already mirror the Prisma models.
+  shapes in `src/types/index.ts` already mirror the Prisma models. This
+  also unblocks per-user authorization (e.g. a mentor should only see
+  their own matches, not just any role-gated route).
 - **Intake session**: `sessionStorage` is a placeholder for passing intake
-  answers to the recommendation page; move this server-side once auth
-  exists so recommendations can be tied to a persisted `ApplicantProfile`.
+  answers to the recommendation page; move this server-side once
+  persistence exists so recommendations can be tied to a persisted
+  `ApplicantProfile`.
 - **LLM integration**: see §3 — `generatePathwayRecommendations` and the
   AI guide's conversational turns beyond the fixed welcome script are the
   two seams intended for a real model call.
 
-## 8. Long-term vision
+## 9. Long-term vision
 
 Help the World Win is designed to grow into a global opportunity platform:
 career discovery, workforce development, apprenticeships, mentorship,
