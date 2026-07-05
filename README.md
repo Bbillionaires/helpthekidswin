@@ -41,8 +41,8 @@ rewrite.
 
 ## User journey
 
-1. Visitor enters `/hall-of-opportunity`; an AI guide delivers the welcome
-   script and the hallway of doors appears.
+1. The homepage (`/`) *is* the Hall of Opportunity: an AI guide delivers
+   the welcome script, then the hallway of doors appears in place.
 2. Choosing a door leads to `/pathways/[slug]`, then a short intake
    interview at `/pathways/[slug]/intake`.
 3. The recommendation engine (`src/lib/ai/recommend.ts`) analyzes the
@@ -94,9 +94,9 @@ cp .env.example .env.local   # fill in DATABASE_URL, AUTH_SECRET (npx auth secre
 npm run dev
 ```
 
-Open `http://localhost:3000` to see the homepage, then click through to
-the Hall of Opportunity. Sign in at `/login` with one of the demo accounts
-listed on that page (one per role) to explore the role-gated
+Open `http://localhost:3000` to walk straight into the Hall of
+Opportunity. Sign in at `/login` with one of the demo accounts listed on
+that page (one per role) to explore the role-gated
 applicant/mentor/admin/workspace routes.
 
 ## Roadmap

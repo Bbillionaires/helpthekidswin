@@ -72,7 +72,7 @@ export default function RecommendationPage() {
                       Lock This Door
                     </button>
                     <Link
-                      href="/hall-of-opportunity"
+                      href="/"
                       className="rounded-full border border-white/30 px-6 py-2 font-semibold text-white transition hover:bg-white/10"
                     >
                       Explore Another Door

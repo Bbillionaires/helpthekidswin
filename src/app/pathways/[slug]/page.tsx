@@ -36,7 +36,7 @@ export default function PathwayDoorPage({ params }: { params: { slug: string } }
           Begin Intake Interview
         </Link>
         <Link
-          href="/hall-of-opportunity"
+          href="/"
           className="rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
         >
           Back to the Hallway

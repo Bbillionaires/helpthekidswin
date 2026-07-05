@@ -28,11 +28,14 @@ Organization  (Help the World Win)
 
 ## 2. The Hall of Opportunity experience
 
-`/hall-of-opportunity` (`src/app/hall-of-opportunity/page.tsx`) renders the
-AI guide's welcome script, then a grid of `DoorCard` components driven
-entirely by `PATHWAYS` (`src/lib/pathways.ts`). Each pathway carries its own
-gradient, glow color, icon, and atmosphere copy so doors are visually
-distinct without per-door components. The current implementation uses CSS
+The homepage (`src/app/page.tsx`, at `/`) *is* the hallway — there is no
+separate marketing splash page in front of it, matching the brief's
+"instead of a traditional website" framing. It renders the AI guide's
+welcome script, then a grid of `DoorCard` components driven entirely by
+`PATHWAYS` (`src/lib/pathways.ts`). `/hall-of-opportunity` is kept as a
+redirect to `/` for any old links. Each pathway carries its own gradient,
+glow color, icon, and atmosphere copy so doors are visually distinct
+without per-door components. The current implementation uses CSS
 gradients + Framer Motion; the `musicMood` field is a hook for adding real
 per-pathway audio later without touching layout code.
 
