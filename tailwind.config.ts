@@ -16,10 +16,6 @@ const config: Config = {
         display: ["var(--font-display)", "serif"],
         body: ["var(--font-body)", "sans-serif"],
       },
-      backgroundImage: {
-        "hallway-floor":
-          "radial-gradient(ellipse at 50% 0%, rgba(232,184,109,0.15), transparent 60%)",
-      },
       keyframes: {
         flicker: {
           "0%, 100%": { opacity: "1" },

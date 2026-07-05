@@ -3,16 +3,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DoorCard } from "@/components/DoorCard";
+import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { PATHWAYS } from "@/lib/pathways";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
 
 export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
+  const leftDoors = PATHWAYS.filter((_, i) => i % 2 === 0);
+  const rightDoors = PATHWAYS.filter((_, i) => i % 2 === 1);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-6 py-10">
-      <div className="pointer-events-none absolute inset-0 bg-hallway-floor" />
+      <HallwayBackdrop />
 
       <div className="relative z-10 mx-auto mb-10 flex max-w-6xl flex-col items-center gap-1 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
@@ -74,10 +77,17 @@ export default function HomePage() {
               Choose a door. Each one leads to a different pathway, a different atmosphere,
               a different future.
             </p>
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {PATHWAYS.map((pathway, index) => (
-                <DoorCard key={pathway.slug} pathway={pathway} index={index} />
-              ))}
+            <div className="mx-auto flex max-w-6xl items-start justify-between gap-6 px-2 sm:px-6">
+              <div className="flex flex-1 flex-col items-center gap-12 sm:items-start">
+                {leftDoors.map((pathway, index) => (
+                  <DoorCard key={pathway.slug} pathway={pathway} index={index * 2} />
+                ))}
+              </div>
+              <div className="flex flex-1 flex-col items-center gap-12 sm:items-end">
+                {rightDoors.map((pathway, index) => (
+                  <DoorCard key={pathway.slug} pathway={pathway} index={index * 2 + 1} />
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
