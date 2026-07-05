@@ -17,9 +17,6 @@ export async function Navbar() {
           </span>
         </Link>
         <nav className="flex items-center gap-6 text-sm text-white/80">
-          <Link href="/hall-of-opportunity" className="hover:text-white">
-            Hall of Opportunity
-          </Link>
           <Link href="/mentor/profile" className="hover:text-white">
             Mentors
           </Link>
