@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { DoorCard } from "@/components/DoorCard";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { Emblem } from "@/components/Emblem";
-import { FloorMedallion } from "@/components/FloorMedallion";
-import { PATHWAYS } from "@/lib/pathways";
+import { HALLWAY_HOTSPOTS } from "@/lib/hallwayHotspots";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
 
 export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
-  const upperGallery = PATHWAYS.slice(0, 4);
-  const lowerGallery = PATHWAYS.slice(4, 10);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-6 py-10">
@@ -86,18 +83,7 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="relative z-10 mx-auto max-w-6xl"
           >
-            <div className="mb-8 flex flex-col items-center gap-2 text-center">
-              {/* Full, uncropped reference art */}
-              <div className="relative mb-4 w-full max-w-3xl overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
-                <Image
-                  src="/images/hall-of-opportunity-interior.png"
-                  alt="Inside the Hall of Opportunity"
-                  width={1536}
-                  height={1024}
-                  className="h-auto w-full"
-                />
-              </div>
-
+            <div className="mb-6 flex flex-col items-center gap-2 text-center">
               <Emblem size={56} />
               <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-hallway-gold sm:text-4xl">
                 The Hall of Opportunity
@@ -109,29 +95,35 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Upper gallery */}
-            <div className="mb-6 flex flex-wrap justify-center gap-x-8 gap-y-8 sm:gap-x-14">
-              {upperGallery.map((pathway, index) => (
-                <DoorCard key={pathway.slug} pathway={pathway} index={index} size="sm" />
+            {/* Full, uncropped reference art with clickable regions over each
+                painted door. See src/lib/hallwayHotspots.ts for the pathway
+                mapping and why it isn't a 1:1 label match. */}
+            <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
+              <Image
+                src="/images/hall-of-opportunity-interior.png"
+                alt="Inside the Hall of Opportunity"
+                width={1536}
+                height={1024}
+                className="h-auto w-full"
+                priority
+              />
+
+              {HALLWAY_HOTSPOTS.map((hotspot) => (
+                <Link
+                  key={hotspot.pathwaySlug}
+                  href={`/pathways/${hotspot.pathwaySlug}`}
+                  title={hotspot.imageLabel}
+                  className="group absolute rounded-md transition"
+                  style={{
+                    top: `${hotspot.top}%`,
+                    left: `${hotspot.left}%`,
+                    width: `${hotspot.width}%`,
+                    height: `${hotspot.height}%`,
+                  }}
+                >
+                  <span className="block h-full w-full rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                </Link>
               ))}
-            </div>
-
-            <div className="mx-auto mb-6 h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-hallway-gold/30 to-transparent" />
-
-            {/* Lower gallery */}
-            <div className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-8">
-              {lowerGallery.map((pathway, index) => (
-                <DoorCard
-                  key={pathway.slug}
-                  pathway={pathway}
-                  index={upperGallery.length + index}
-                  size="lg"
-                />
-              ))}
-            </div>
-
-            <div className="mt-10 flex justify-center">
-              <FloorMedallion />
             </div>
           </motion.div>
         )}

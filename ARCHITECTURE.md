@@ -31,13 +31,22 @@ Organization  (Help the World Win)
 The homepage (`src/app/page.tsx`, at `/`) *is* the hallway — there is no
 separate marketing splash page in front of it, matching the brief's
 "instead of a traditional website" framing. It renders the AI guide's
-welcome script, then a grid of `DoorCard` components driven entirely by
-`PATHWAYS` (`src/lib/pathways.ts`). `/hall-of-opportunity` is kept as a
-redirect to `/` for any old links. Each pathway carries its own gradient,
-glow color, icon, and atmosphere copy so doors are visually distinct
-without per-door components. The current implementation uses CSS
-gradients + Framer Motion; the `musicMood` field is a hook for adding real
-per-pathway audio later without touching layout code.
+welcome script over the full exterior reference photo
+(`public/images/mansion-exterior.png`), then the full interior reference
+photo (`public/images/hall-of-opportunity-interior.png`) with clickable
+regions layered over each painted door.
+
+`src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
+in percent, so it scales with the rendered image) to a pathway slug. The
+reference art's painted door labels don't all match our 10 real pathways
+— see that file's comment for which 5 line up by name and how the other
+5 are assigned. `PATHWAYS` (`src/lib/pathways.ts`) still defines the
+gradient/icon/atmosphere metadata used on each pathway's own page; it's
+no longer used to render doors directly on the homepage. `/pathways/[slug]`
+requires a working image at `public/images/` — if a different/updated
+reference image is dropped in, `hallwayHotspots.ts` coordinates will need
+re-measuring to match. `/hall-of-opportunity` is kept as a redirect to
+`/` for any old links.
 
 ## 3. Intake → AI recommendation → decision
 
