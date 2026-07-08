@@ -14,10 +14,10 @@ export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-hallway-void px-6 py-10">
+    <main className="relative min-h-screen overflow-hidden bg-hallway-void px-3 py-6">
       <HallwayBackdrop />
 
-      <div className="relative z-10 mx-auto mb-6 flex max-w-6xl flex-col items-center gap-1 text-center">
+      <div className="relative z-10 mx-auto mb-4 flex max-w-6xl flex-col items-center gap-1 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
           {PARENT_ORGANIZATION.name}
         </p>
@@ -36,25 +36,26 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="relative z-10 mx-auto flex min-h-[50vh] max-w-2xl flex-col items-center justify-center gap-6 text-center"
+            className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-4 text-center"
           >
             <Emblem />
-            <div className="space-y-2">
+            <div className="space-y-1">
               {GUIDE_WELCOME_MESSAGE.map((line, i) => (
                 <motion.p
                   key={line}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.6, duration: 0.6 }}
-                  className="font-display text-xl text-white/90 sm:text-2xl"
+                  className="font-display text-lg text-white/90 sm:text-xl"
                 >
                   {line}
                 </motion.p>
               ))}
             </div>
 
-            {/* Full, uncropped reference art */}
-            <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
+            {/* Full, uncropped reference art. The front door itself is a
+                clickable hotspot (same action as the button below it). */}
+            <div className="relative w-full overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
               <Image
                 src="/images/mansion-exterior.png"
                 alt="Hall of Opportunity mansion entrance"
@@ -63,6 +64,14 @@ export default function HomePage() {
                 className="h-auto w-full"
                 priority
               />
+              <button
+                onClick={() => setWelcomed(true)}
+                title="Enter the Hall of Opportunity"
+                className="group absolute rounded-md transition"
+                style={{ top: "32%", left: "41%", width: "18%", height: "45%" }}
+              >
+                <span className="block h-full w-full rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+              </button>
             </div>
 
             <motion.button
@@ -81,15 +90,14 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="relative z-10 mx-auto max-w-6xl"
+            className="relative z-10 mx-auto w-full max-w-7xl"
           >
-            <div className="mb-6 flex flex-col items-center gap-2 text-center">
-              <Emblem size={56} />
-              <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-hallway-gold sm:text-4xl">
+            <div className="mb-4 flex flex-col items-center gap-1 text-center">
+              <Emblem size={48} />
+              <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-hallway-gold sm:text-3xl">
                 The Hall of Opportunity
               </h2>
-              <div className="h-px w-40 bg-gradient-to-r from-transparent via-hallway-gold/60 to-transparent" />
-              <p className="max-w-xl text-white/60">
+              <p className="max-w-xl text-sm text-white/60">
                 Choose a door below. Each one leads to a different pathway, a different
                 atmosphere, a different future.
               </p>
@@ -98,7 +106,7 @@ export default function HomePage() {
             {/* Full, uncropped reference art with clickable regions over each
                 painted door. See src/lib/hallwayHotspots.ts for the pathway
                 mapping and why it isn't a 1:1 label match. */}
-            <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
+            <div className="relative mx-auto w-full overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
               <Image
                 src="/images/hall-of-opportunity-interior.png"
                 alt="Inside the Hall of Opportunity"
