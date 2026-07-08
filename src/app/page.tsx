@@ -4,20 +4,22 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DoorCard } from "@/components/DoorCard";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
+import { Emblem } from "@/components/Emblem";
+import { FloorMedallion } from "@/components/FloorMedallion";
 import { PATHWAYS } from "@/lib/pathways";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
 
 export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
-  const leftDoors = PATHWAYS.filter((_, i) => i % 2 === 0);
-  const rightDoors = PATHWAYS.filter((_, i) => i % 2 === 1);
+  const upperGallery = PATHWAYS.slice(0, 4);
+  const lowerGallery = PATHWAYS.slice(4, 10);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-6 py-10">
       <HallwayBackdrop />
 
-      <div className="relative z-10 mx-auto mb-10 flex max-w-6xl flex-col items-center gap-1 text-center">
+      <div className="relative z-10 mx-auto mb-6 flex max-w-6xl flex-col items-center gap-1 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
           {PARENT_ORGANIZATION.name}
         </p>
@@ -38,7 +40,7 @@ export default function HomePage() {
             exit={{ opacity: 0 }}
             className="relative z-10 mx-auto flex min-h-[50vh] max-w-2xl flex-col items-center justify-center gap-6 text-center"
           >
-            <span className="text-4xl">✨</span>
+            <Emblem />
             <div className="space-y-2">
               {GUIDE_WELCOME_MESSAGE.map((line, i) => (
                 <motion.p
@@ -70,24 +72,41 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="relative z-10 mx-auto max-w-6xl"
           >
-            <h2 className="mb-2 text-center font-display text-3xl font-bold text-white">
-              The Hall of Opportunity
-            </h2>
-            <p className="mb-10 text-center text-white/60">
-              Choose a door. Each one leads to a different pathway, a different atmosphere,
-              a different future.
-            </p>
-            <div className="mx-auto flex max-w-6xl items-start justify-between gap-6 px-2 sm:px-6">
-              <div className="flex flex-1 flex-col items-center gap-12 sm:items-start">
-                {leftDoors.map((pathway, index) => (
-                  <DoorCard key={pathway.slug} pathway={pathway} index={index * 2} />
-                ))}
-              </div>
-              <div className="flex flex-1 flex-col items-center gap-12 sm:items-end">
-                {rightDoors.map((pathway, index) => (
-                  <DoorCard key={pathway.slug} pathway={pathway} index={index * 2 + 1} />
-                ))}
-              </div>
+            <div className="mb-8 flex flex-col items-center gap-2 text-center">
+              <Emblem size={56} />
+              <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-hallway-gold sm:text-4xl">
+                The Hall of Opportunity
+              </h2>
+              <div className="h-px w-40 bg-gradient-to-r from-transparent via-hallway-gold/60 to-transparent" />
+              <p className="max-w-xl text-white/60">
+                Choose a door. Each one leads to a different pathway, a different
+                atmosphere, a different future.
+              </p>
+            </div>
+
+            {/* Upper gallery */}
+            <div className="mb-6 flex flex-wrap justify-center gap-x-8 gap-y-8 sm:gap-x-14">
+              {upperGallery.map((pathway, index) => (
+                <DoorCard key={pathway.slug} pathway={pathway} index={index} size="sm" />
+              ))}
+            </div>
+
+            <div className="mx-auto mb-6 h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-hallway-gold/30 to-transparent" />
+
+            {/* Lower gallery */}
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-8">
+              {lowerGallery.map((pathway, index) => (
+                <DoorCard
+                  key={pathway.slug}
+                  pathway={pathway}
+                  index={upperGallery.length + index}
+                  size="lg"
+                />
+              ))}
+            </div>
+
+            <div className="mt-10 flex justify-center">
+              <FloorMedallion />
             </div>
           </motion.div>
         )}
