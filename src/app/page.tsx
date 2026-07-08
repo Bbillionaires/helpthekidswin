@@ -8,7 +8,7 @@ import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { Emblem } from "@/components/Emblem";
 import { HALLWAY_HOTSPOTS } from "@/lib/hallwayHotspots";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
-import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
+import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
 export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
@@ -16,15 +16,6 @@ export default function HomePage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-3 py-6">
       <HallwayBackdrop />
-
-      <div className="relative z-10 mx-auto mb-4 flex max-w-6xl flex-col items-center gap-1 text-center">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
-          {PARENT_ORGANIZATION.name}
-        </p>
-        <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
-          {FLAGSHIP_INITIATIVE.name}
-        </h1>
-      </div>
 
       <AnimatePresence mode="wait">
         {!welcomed ? (
@@ -141,6 +132,12 @@ export default function HomePage() {
                   </span>
                 </Link>
               ))}
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">
+                <p className="font-display text-sm italic text-hallway-gold sm:text-base">
+                  Powered by {FLAGSHIP_INITIATIVE.name}
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
