@@ -72,6 +72,12 @@ export default function HomePage() {
               >
                 <span className="block h-full w-full rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
               </button>
+
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">
+                <p className="font-display text-sm italic text-hallway-gold sm:text-base">
+                  Powered by {FLAGSHIP_INITIATIVE.name}
+                </p>
+              </div>
             </div>
 
             <motion.button
