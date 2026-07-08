@@ -24,9 +24,6 @@ export default function HomePage() {
         <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
           {FLAGSHIP_INITIATIVE.name}
         </h1>
-        <p className="font-display text-sm italic text-hallway-gold">
-          &ldquo;{FLAGSHIP_INITIATIVE.tagline}&rdquo;
-        </p>
       </div>
 
       <AnimatePresence mode="wait">
