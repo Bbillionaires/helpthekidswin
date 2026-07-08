@@ -19,6 +19,27 @@ export default function HomePage() {
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-6 py-10">
       <HallwayBackdrop />
 
+      {!welcomed && (
+        /* Cropped to the clean facade/door/statues band of the reference art,
+           excluding its baked-in nav bar, side text panels, and footer.
+           Kept as a top-level sibling (not nested in a motion.div) because
+           framer-motion sets a transform style on animated elements, which
+           would make a `position: fixed` descendant relative to that
+           transformed ancestor instead of the viewport. */
+        <div className="pointer-events-none fixed inset-0">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url(/images/mansion-exterior.png)",
+              backgroundSize: "220% auto",
+              backgroundPosition: "50% 32%",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-hallway-void/40 via-hallway-void/70 to-hallway-void" />
+        </div>
+      )}
+
       <div className="relative z-10 mx-auto mb-6 flex max-w-6xl flex-col items-center gap-1 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
           {PARENT_ORGANIZATION.name}
@@ -73,6 +94,21 @@ export default function HomePage() {
             className="relative z-10 mx-auto max-w-6xl"
           >
             <div className="mb-8 flex flex-col items-center gap-2 text-center">
+              {/* Cropped to just the dome/eagle emblem of the reference art,
+                  excluding its baked-in door labels and title text. */}
+              <div className="relative mb-2 aspect-[9/4] w-full max-w-md overflow-hidden rounded-2xl">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: "url(/images/hall-of-opportunity-interior.png)",
+                    backgroundSize: "333% auto",
+                    backgroundPosition: "50% 0%",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-hallway-void" />
+                <div className="absolute inset-0 bg-gradient-to-r from-hallway-void via-transparent to-hallway-void" />
+              </div>
               <Emblem size={56} />
               <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-hallway-gold sm:text-4xl">
                 The Hall of Opportunity
