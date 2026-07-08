@@ -64,10 +64,13 @@ export default function HomePage() {
               <button
                 onClick={() => setWelcomed(true)}
                 title="Enter the Hall of Opportunity"
-                className="group absolute rounded-md transition"
+                className="group absolute flex items-center justify-center rounded-md transition"
                 style={{ top: "32%", left: "41%", width: "18%", height: "45%" }}
               >
-                <span className="block h-full w-full rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                <span className="absolute inset-0 rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                <span className="relative font-display text-sm font-semibold uppercase tracking-widest text-hallway-gold opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100 sm:text-base">
+                  Enter
+                </span>
               </button>
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">
@@ -84,7 +87,7 @@ export default function HomePage() {
               onClick={() => setWelcomed(true)}
               className="mt-4 rounded-full bg-hallway-gold px-8 py-3 font-semibold text-hallway-void transition hover:brightness-110"
             >
-              Step Into the Hallway
+              Enter a New Career
             </motion.button>
           </motion.div>
         ) : (
@@ -124,7 +127,7 @@ export default function HomePage() {
                   key={hotspot.pathwaySlug}
                   href={`/pathways/${hotspot.pathwaySlug}`}
                   title={hotspot.imageLabel}
-                  className="group absolute rounded-md transition"
+                  className="group absolute flex items-center justify-center rounded-md transition"
                   style={{
                     top: `${hotspot.top}%`,
                     left: `${hotspot.left}%`,
@@ -132,7 +135,10 @@ export default function HomePage() {
                     height: `${hotspot.height}%`,
                   }}
                 >
-                  <span className="block h-full w-full rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                  <span className="absolute inset-0 rounded-md ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                  <span className="relative font-display text-xs font-semibold uppercase tracking-widest text-hallway-gold opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100 sm:text-sm">
+                    Enter
+                  </span>
                 </Link>
               ))}
             </div>
