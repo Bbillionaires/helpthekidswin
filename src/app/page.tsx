@@ -7,6 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { Emblem } from "@/components/Emblem";
 import { HALLWAY_HOTSPOTS } from "@/lib/hallwayHotspots";
+import {
+  EXTERIOR_NAV_LINKS,
+  EXTERIOR_OPPORTUNITIES_HOTSPOT,
+  EXTERIOR_ENTER_BUTTON_HOTSPOT,
+} from "@/lib/exteriorHotspots";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
@@ -62,6 +67,50 @@ export default function HomePage() {
                 <span className="relative font-display text-sm font-semibold uppercase tracking-widest text-hallway-gold opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100 sm:text-base">
                   Enter
                 </span>
+              </button>
+
+              {/* Nav bar painted into the image, made clickable */}
+              {EXTERIOR_NAV_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  title={link.label}
+                  className="group absolute rounded transition"
+                  style={{
+                    top: `${link.top}%`,
+                    left: `${link.left}%`,
+                    width: `${link.width}%`,
+                    height: `${link.height}%`,
+                  }}
+                >
+                  <span className="block h-full w-full rounded ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-1 group-hover:ring-hallway-gold/70" />
+                </Link>
+              ))}
+              <button
+                onClick={() => setWelcomed(true)}
+                title="Opportunities"
+                className="group absolute rounded transition"
+                style={{
+                  top: `${EXTERIOR_OPPORTUNITIES_HOTSPOT.top}%`,
+                  left: `${EXTERIOR_OPPORTUNITIES_HOTSPOT.left}%`,
+                  width: `${EXTERIOR_OPPORTUNITIES_HOTSPOT.width}%`,
+                  height: `${EXTERIOR_OPPORTUNITIES_HOTSPOT.height}%`,
+                }}
+              >
+                <span className="block h-full w-full rounded ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-1 group-hover:ring-hallway-gold/70" />
+              </button>
+              <button
+                onClick={() => setWelcomed(true)}
+                title="Enter Your Future"
+                className="group absolute rounded transition"
+                style={{
+                  top: `${EXTERIOR_ENTER_BUTTON_HOTSPOT.top}%`,
+                  left: `${EXTERIOR_ENTER_BUTTON_HOTSPOT.left}%`,
+                  width: `${EXTERIOR_ENTER_BUTTON_HOTSPOT.width}%`,
+                  height: `${EXTERIOR_ENTER_BUTTON_HOTSPOT.height}%`,
+                }}
+              >
+                <span className="block h-full w-full rounded ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-1 group-hover:ring-hallway-gold/70" />
               </button>
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">

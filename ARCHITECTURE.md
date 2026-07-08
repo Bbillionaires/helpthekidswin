@@ -48,6 +48,28 @@ reference image is dropped in, `hallwayHotspots.ts` coordinates will need
 re-measuring to match. `/hall-of-opportunity` is kept as a redirect to
 `/` for any old links.
 
+The exterior image's painted nav bar (Home / About / Opportunities /
+Mentorship / Resources / Contact / "Enter Your Future") is made
+clickable the same way — `src/lib/exteriorHotspots.ts` holds those
+coordinates. "Opportunities" and "Enter Your Future" both just trigger
+entering the hallway; the rest route to real pages (`/about`,
+`/mentors`, `/resources`, `/contact`).
+
+## 2a. Pathway rooms
+
+`/pathways/[slug]` is a themed "room," not a flat info page: a wall of
+`PictureFrame`s for mentors matched to that pathway
+(`getMentorsForPathway` in `src/data/mock.ts`, matched on
+`MentorProfile.careerSpecialties`), a second wall of frames for Practice
+Test / Application / Refer a Recruit, and one `Mirror` component — the
+room's entry point into the intake flow. Both `PictureFrame` and `Mirror`
+are plain link wrappers styled to fit the mansion aesthetic; neither
+depends on a per-room reference image, so every pathway gets the same
+treatment without needing 10 more pieces of art.
+
+`/mentors` is the analogous "gallery" for the Mentorship nav tab — every
+`MOCK_MENTORS` entry as a frame, linking to `/mentors/[id]`.
+
 ## 3. Intake → AI recommendation → decision
 
 1. `/pathways/[slug]/intake` walks the applicant through
@@ -150,6 +172,20 @@ unchanged once the identity layer is real.
 - **LLM integration**: see §3 — `generatePathwayRecommendations` and the
   AI guide's conversational turns beyond the fixed welcome script are the
   two seams intended for a real model call.
+- **Practice test / refer-a-recruit are UI-only stubs**: `/pathways/[slug]/practice-test`
+  scores client-side and shows nothing to a mentor or admin;
+  `/pathways/[slug]/refer` shows a confirmation but sends nothing. Both
+  need a real submission target once one exists.
+- **Intake intended to become a Google Form → Sheet → LLM pipeline**: the
+  requested design is: the mirror leads to a Google Form, responses land
+  in a Google Sheet, and a server-side job calls an LLM against that
+  sheet's rows to produce the pathway recommendation (replacing the
+  client-side tag-matching stub in `generatePathwayRecommendations`).
+  This needs two things only the org can provide: (1) the Google Form
+  itself, or a service-account credential with Sheets API access, and
+  (2) an LLM API key set as an environment variable. Until those exist,
+  `/pathways/[slug]/intake` stays on the current sessionStorage +
+  tag-matching implementation as the interim mirror destination.
 
 ## 9. Long-term vision
 
