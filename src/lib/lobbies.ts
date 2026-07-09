@@ -67,13 +67,11 @@ export const LOBBIES: Record<string, Lobby> = {
   "professional-careers": {
     slug: "professional-careers",
     name: "Professional Careers",
-    atmosphere: "Four professional tracks, each with its own room and mirror.",
+    atmosphere: "Choose a path. Build a skill. Make an impact.",
     icon: "⚖️",
     items: [
-      { label: "Attorney", href: "/pathways/attorney" },
       { label: "Medical", href: "/pathways/healthcare" },
       { label: "Accounting", href: "/pathways/accounting" },
-      { label: "Advertiser", href: "/pathways/advertiser" },
     ],
   },
   "business-acquisition-stock-trading": {
