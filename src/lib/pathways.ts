@@ -150,6 +150,32 @@ export const PATHWAYS: CareerPathway[] = [
     physicalDemand: "low",
     requirements: ["Programming fundamentals", "Portfolio or project pathway"],
   },
+  {
+    slug: "business-acquisition-stock-trading",
+    name: "Business Acquisition & Stock Trading",
+    shortDescription: "Acquire, grow, and invest — buying businesses and building wealth in the markets.",
+    atmosphere: "Handshake deals under warm light, ticking stock tickers, a boardroom hush.",
+    icon: "🤝",
+    gradient: "from-purple-950 via-violet-900 to-fuchsia-900",
+    glow: "shadow-purple-500/40",
+    musicMood: "Confident brass swells with a steady market-bell pulse",
+    tags: ["business", "finance", "leadership", "remote-friendly"],
+    physicalDemand: "low",
+    requirements: ["Financial literacy fundamentals", "Series 65 or equivalent pathway (for trading)"],
+  },
+  {
+    slug: "professional-careers",
+    name: "Professional Careers",
+    shortDescription: "Attorney, Medical, Accounting, or Advertising — pick a professional track and go deep.",
+    atmosphere: "Marble halls, quiet conviction, the scales of justice catching candlelight.",
+    icon: "⚖️",
+    gradient: "from-blue-950 via-slate-900 to-indigo-900",
+    glow: "shadow-blue-400/40",
+    musicMood: "Measured strings with a formal, deliberate cadence",
+    tags: ["professional", "certification", "leadership"],
+    physicalDemand: "low",
+    requirements: ["Field-specific license or degree pathway (varies by specialty)"],
+  },
 ];
 
 export function getPathway(slug: string): CareerPathway | undefined {

@@ -241,6 +241,36 @@ export const PATHWAY_INTAKE_QUESTIONS: Record<string, IntakeQuestion[]> = {
       category: "pathway-specific",
     },
   ],
+  "business-acquisition-stock-trading": [
+    {
+      id: "business-acquisition-focus",
+      prompt: "Which side interests you more?",
+      kind: "choice",
+      choices: ["Acquiring/running businesses", "Trading in the markets", "Both equally", "Not sure yet"],
+      category: "pathway-specific",
+    },
+    {
+      id: "business-acquisition-risk",
+      prompt: "How comfortable are you with financial risk and market ups and downs?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+  ],
+  "professional-careers": [
+    {
+      id: "professional-careers-track",
+      prompt: "Which professional track interests you most?",
+      kind: "choice",
+      choices: ["Attorney", "Medical", "Accounting", "Advertiser", "Not sure yet"],
+      category: "pathway-specific",
+    },
+    {
+      id: "professional-careers-education",
+      prompt: "Are you prepared for the years of schooling/licensing many professional tracks require?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+  ],
 };
 
 /** Shared across every pathway — self-assessed skill level and training readiness. */
