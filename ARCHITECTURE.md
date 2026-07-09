@@ -66,7 +66,7 @@ AI Architect. `PATHWAYS` (`src/lib/pathways.ts`) still defines the
 gradient/icon/atmosphere metadata used on each pathway's own page; it's
 no longer used to render doors directly on the homepage. `/pathways/[slug]`
 requires either a working image at `public/images/` or falls back to a
-plain CSS page (see §2c). `/hall-of-opportunity` is kept as a redirect
+plain CSS page (see §2d). `/hall-of-opportunity` is kept as a redirect
 to `/` for any old links.
 
 **`advertiser` currently has no hallway door or lobby item at all** —
@@ -93,7 +93,7 @@ depending on whether the lobby has unique art:
   floor console table → Cybersecurity, the wall of six screens → Web
   Development & Programming, the standing panel → AI Architect (AI
   Development). Each of those three pathways then reuses the *same*
-  image again as its own room (see §2c) — "disregard the [dedicated]
+  image again as its own room (see §2d) — "disregard the [dedicated]
   cybersecurity room, use the generalized tech room" was the explicit
   instruction that produced this.
 - **Professional Careers** (Medical / Accounting) and **Business
@@ -148,7 +148,23 @@ then `createApplicantProfile()` (`src/data/mock.ts`) before signing the
 new account in and redirecting back to the `callbackUrl`. See §7 for the
 same demo-grade caveat that already applied to login.
 
-## 2c. Pathway rooms
+### 2c. Profile-completion gate
+
+Registering creates an `ApplicantProfile`, but an empty one —
+`careerProfile.goals` starts as `""`. The first room door an applicant
+successfully walks through checks that: if `goals` is still empty,
+`/pathways/[slug]/page.tsx` redirects to `/pathways/[slug]/profile`
+(`src/app/pathways/[slug]/profile/page.tsx`), a short 4-question form
+(goals, city/state, availability, transportation) that `POST`s to
+`/api/profile/complete` and then sends the applicant back to the room
+they were trying to enter. This only fires once — after the first
+completion, `goals` is no longer empty, so later rooms skip straight to
+their content. This is deliberately a *different, much shorter* thing
+than the interview behind the mirror (§3): this is "who are you," not
+"how well do you fit this specific career" — the 27-question evaluation
+stays exclusively behind the mirror, never at the door.
+
+## 2d. Pathway rooms
 
 `/pathways/[slug]` renders a real per-pathway reference image
 (`public/images/room-*.png`, one per pathway) rather than a CSS mockup.

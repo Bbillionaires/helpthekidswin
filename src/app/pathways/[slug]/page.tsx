@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPathway, PATHWAYS } from "@/lib/pathways";
-import { getMentorsForPathway } from "@/data/mock";
+import { getMentorsForPathway, getApplicantByUserId } from "@/data/mock";
 import { getRoomArt } from "@/lib/pathwayRooms";
 
 export function generateStaticParams() {
@@ -21,6 +21,15 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
   const session = await auth();
   if (!session?.user) {
     redirect(`/register?callbackUrl=${encodeURIComponent(`/pathways/${pathway.slug}`)}`);
+  }
+
+  // A one-time, 4-question profile (goals/location/availability/
+  // transportation) is required at the first room door an applicant
+  // walks through — not the full interview, which stays behind the
+  // mirror inside. Once complete, it isn't asked again for later rooms.
+  const applicant = getApplicantByUserId(session.user.id);
+  if (applicant && !applicant.careerProfile.goals) {
+    redirect(`/pathways/${pathway.slug}/profile`);
   }
 
   const mentors = getMentorsForPathway(pathway.name);
@@ -52,8 +61,8 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
         <Image
           src={room.image}
           alt={`${pathway.name} room`}
-          width={1536}
-          height={1024}
+          width={room.imageWidth ?? 1536}
+          height={room.imageHeight ?? 1024}
           className="h-auto w-full"
           priority
         />
@@ -152,6 +161,23 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
             Begin Interview
           </span>
         </Link>
+
+        {/* Some art bakes in its own "return to hall" graphic — overlay a real link on it */}
+        {room.returnToHallway && (
+          <Link
+            href="/?entered=1"
+            title="Return to Hall"
+            className="group absolute rounded-sm transition"
+            style={{
+              top: `${room.returnToHallway.top}%`,
+              left: `${room.returnToHallway.left}%`,
+              width: `${room.returnToHallway.width}%`,
+              height: `${room.returnToHallway.height}%`,
+            }}
+          >
+            <span className="block h-full w-full rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+          </Link>
+        )}
       </div>
 
       <div className="mx-auto mt-6 flex max-w-6xl flex-col items-center gap-2 text-center">

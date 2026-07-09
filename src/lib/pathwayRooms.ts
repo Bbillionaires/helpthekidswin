@@ -22,11 +22,16 @@ export interface RoomSlot {
 
 export interface PathwayRoomArt {
   image: string;
+  /** Real pixel dimensions of `image`, only needed when it isn't the standard 1536x1024 canvas — otherwise the page defaults to that. */
+  imageWidth?: number;
+  imageHeight?: number;
   mentorFrames: RoomSlot[];
   practiceTestFrame: RoomSlot;
   applicationFrame: RoomSlot;
   referFrame: RoomSlot;
   mirror: RoomSlot;
+  /** Some art bakes in its own "return to hall" graphic — overlay a real link on it when present. */
+  returnToHallway?: RoomSlot;
 }
 
 function evenRow(left: number, right: number, count: number, top: number, height: number): RoomSlot[] {
@@ -128,6 +133,35 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     applicationFrame: { top: 72, left: 45, width: 11, height: 18 },
     referFrame: { top: 72, left: 57, width: 11, height: 18 },
     mirror: { top: 28, left: 78, width: 14, height: 55 },
+  },
+  // These are the Accounting and Business Acquisition PATHWAY rooms
+  // (final destination, reached via a lobby item — see
+  // src/lib/lobbies.ts) — not the lobby itself, and not to be confused
+  // with the lobby's plain card-grid page. Each is a fully-rendered
+  // scene (no blank frames), so mentors/practice-test/application/refer
+  // are zeroed out here the same way as the shared tech room, and only
+  // the mirror (the round gold mirror already in each render) is wired
+  // up. Both were supplied at 1402x1122, not the usual 1536x1024 canvas.
+  accounting: {
+    image: "/images/room-accounting.png",
+    imageWidth: 1402,
+    imageHeight: 1122,
+    mentorFrames: [],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 18, left: 40, width: 22, height: 30 },
+  },
+  "business-acquisition": {
+    image: "/images/room-business-acquisition.png",
+    imageWidth: 1402,
+    imageHeight: 1122,
+    mentorFrames: [],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 23, left: 40, width: 22, height: 25 },
+    returnToHallway: { top: 65, left: 43, width: 13, height: 4 },
   },
 };
 
