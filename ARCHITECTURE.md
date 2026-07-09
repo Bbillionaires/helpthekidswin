@@ -107,14 +107,25 @@ the pathway rooms, before it can replace the CSS version.
 ## 3. Intake → AI recommendation → decision
 
 1. `/pathways/[slug]/intake` walks the applicant through
-   `INTAKE_QUESTIONS` (`src/lib/ai/guide.ts`) and stores raw answers in
-   `sessionStorage` (a placeholder for a real server-side session — see
-   §7).
+   `getIntakeQuestions(slug)` (`src/lib/ai/guide.ts`) — the shared
+   `INTAKE_QUESTIONS` base (goals, environment, team style, risk
+   tolerance, interests, timeline) plus that pathway's own follow-up
+   questions from `PATHWAY_INTAKE_QUESTIONS` (e.g. Merchant Marine asks
+   about time away from home, Firefighter asks about EMT certification,
+   AI Architect asks about prior programming projects). This is how each
+   room's mirror leads into an interview that actually reflects that
+   career, not one generic interview reused everywhere. Raw answers are
+   stored in `sessionStorage` (a placeholder for a real server-side
+   session — see §7).
 2. `/pathways/[slug]/recommendation` calls
    `generatePathwayRecommendations()` (`src/lib/ai/recommend.ts`), which
-   currently scores pathways by tag overlap so the flow works without an
-   API key. **This is the one function to replace with a real LLM call**
-   (e.g. the Claude Messages API): keep the same
+   currently scores pathways by tag overlap on the base questions'
+   answers (`interests`, `environment`) so the flow works without an API
+   key. The pathway-specific follow-up answers are captured in the same
+   response payload but not yet scored — replacing this function with a
+   real LLM call (see next point) is also where those answers start
+   pulling weight. **This is the one function to replace with a real LLM
+   call** (e.g. the Claude Messages API): keep the same
    `(IntakeResponse[]) => PathwayRecommendation[]` signature, prompt the
    model with the applicant's answers plus `PATHWAYS`, and parse its reply.
 3. The UI always frames results as advisory ("Lock This Door" / "Explore
