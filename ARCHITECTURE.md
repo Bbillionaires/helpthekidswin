@@ -62,6 +62,39 @@ coordinates. "Opportunities" and "Enter Your Future" both just trigger
 entering the hallway; the rest route to real pages (`/about`,
 `/mentors`, `/resources`, `/contact`).
 
+`src/app/page.tsx` is a thin server component (calls `auth()` to know
+whether to gate entry — see §7a) that renders `HomeExperience`
+(`src/app/HomeExperience.tsx`), the actual client component holding the
+exterior/interior toggle. That toggle (`welcomed` state) is local
+component state, which resets on a full navigation — so every "Back to
+the Hallway" / "Explore Another Door" / "Back to the Hall of
+Opportunity" link across the app points at `/?entered=1` rather than
+plain `/`; `HomeExperience` reads that query param on mount and jumps
+straight to the interior instead of replaying the exterior welcome
+screen. Plain `/` (e.g. the navbar logo) intentionally still resets to
+the exterior.
+
+### 2a. Registration gate
+
+Anyone can click "Enter" and browse the full hallway — every painted
+door, hovering to see its label — without an account. Registration is
+gated one step later, at **room entry**: `/pathways/[slug]/page.tsx`
+calls `auth()` server-side and, if there's no session, `redirect()`s to
+`/register?callbackUrl=/pathways/{slug}` before rendering any room
+content (mentors, practice test, the mirror). This is a deliberate
+middle ground — gating at the front door turned away curious visitors
+before they'd seen anything; deferring all the way to the mirror would
+let people browse every room anonymously. Room entry is the point where
+an applicant profile actually starts to matter: mentors/admins need
+someone to track, and a completed interview needs an account for its
+score, answers, and eventual certificate to attach to (see §3 and §3a).
+After registering, the applicant lands back on the same room they tried
+to enter. `src/app/register/page.tsx` is a server-action form (same
+pattern as `/login`) that calls `registerUser()` (`src/lib/auth/users.ts`)
+then `createApplicantProfile()` (`src/data/mock.ts`) before signing the
+new account in and redirecting back to the `callbackUrl`. See §7 for the
+same demo-grade caveat that already applied to login.
+
 ## 2a. Pathway rooms
 
 `/pathways/[slug]` renders a real per-pathway reference image
@@ -107,19 +140,78 @@ the pathway rooms, before it can replace the CSS version.
 ## 3. Intake → AI recommendation → decision
 
 1. `/pathways/[slug]/intake` walks the applicant through
-   `INTAKE_QUESTIONS` (`src/lib/ai/guide.ts`) and stores raw answers in
-   `sessionStorage` (a placeholder for a real server-side session — see
-   §7).
-2. `/pathways/[slug]/recommendation` calls
-   `generatePathwayRecommendations()` (`src/lib/ai/recommend.ts`), which
-   currently scores pathways by tag overlap so the flow works without an
-   API key. **This is the one function to replace with a real LLM call**
-   (e.g. the Claude Messages API): keep the same
-   `(IntakeResponse[]) => PathwayRecommendation[]` signature, prompt the
-   model with the applicant's answers plus `PATHWAYS`, and parse its reply.
-3. The UI always frames results as advisory ("Lock This Door" / "Explore
-   Another Door") — the recommendation engine must never auto-select a
-   pathway for the applicant.
+   `getIntakeQuestions(slug)` (`src/lib/ai/guide.ts`) — up to 33 questions
+   (27 today, leaving headroom), assembled from: the shared `INTAKE_QUESTIONS`
+   core (goals, environment, team style, risk tolerance, interests,
+   timeline); that pathway's own `PATHWAY_INTAKE_QUESTIONS` follow-ups
+   (e.g. Merchant Marine asks about time away from home, Firefighter asks
+   about EMT certification); `SKILL_LEVEL_QUESTIONS`; `PSYCHOLOGY_QUESTIONS`;
+   `HEALTH_FITNESS_QUESTIONS`; `SCIENCE_AWARENESS_QUESTIONS`; and
+   `QUALIFYING_QUESTIONS` (age, education, work authorization, felony,
+   DUI/DWI, background-check consent — the qualify/disqualify screen).
+   This is how each room's mirror leads into an interview that actually
+   reflects that career, and screens for real-world eligibility, not one
+   generic interview reused everywhere.
+2. On the last question, the client POSTs all responses to
+   `/api/intake/submit` (`src/app/api/intake/submit/route.ts`), which
+   calls `generatePathwayRecommendations(responses, pickedSlug)`
+   (`src/lib/ai/recommend.ts`) server-side and returns a
+   `RecommendationResult`: a `picked` fit score (0-100) for the door the
+   applicant actually walked through, plus up to 3 ranked `alternates` —
+   the contingency doors, including ones that scored higher than the
+   picked pathway. Scoring combines interest/motivation/team-style tag
+   overlap, risk-tolerance and health-fitness alignment against the
+   pathway's `physicalDemand`, the science/aptitude questions' correctness,
+   and skill-level self-reporting. `DISQUALIFIERS` in the same file maps
+   qualifying answers to pathways: `hard` disqualifiers (e.g. no U.S. work
+   authorization, under the minimum age for Military/Police/Firefighter/
+   Truck Driver/Merchant Marine/Longshoremen, a felony for Police
+   Officer/Military) drop a pathway's eligibility to zero and exclude it
+   from the ranked alternates; `caution` disqualifiers (e.g. a DUI for a
+   pathway that isn't Truck Driver) dock points and surface an explanatory
+   note without blocking it outright. **This deterministic scorer is the
+   one function to replace with a real LLM call** (e.g. the Claude
+   Messages API): keep the same
+   `(IntakeResponse[], pathwaySlug) => RecommendationResult` signature,
+   prompt the model with the applicant's answers plus `PATHWAYS`, and
+   parse its reply into the same shape.
+3. If the request carries a session, the route also calls
+   `recordIntakeAssessment()` (`src/data/mock.ts`), which appends an
+   `AssessmentResult` — score **and every raw question/answer pair** — to
+   that applicant's profile and updates `readinessScore`. `/admin/applicants`
+   renders each interview (collapsed by default, expandable) so an admin
+   can see exactly how an applicant answered, not just their score. This
+   is why registration (§2a) happens before intake: without a signed-in
+   applicant, an interview still scores and displays normally, it just has
+   nowhere durable to land.
+4. `/pathways/[slug]/recommendation` reads the `RecommendationResult`
+   back out of `sessionStorage` (a placeholder for a real server-side
+   session — see §8) and renders the picked door's fit score plus the
+   alternates, always framed as advisory ("Lock This Door" / "Explore
+   Another Door" / "Consider This Instead") — the recommendation engine
+   must never auto-select a pathway for the applicant.
+
+## 3a. Certificates
+
+`/workspace/[matchId]`'s Certificates tab lets a signed-in mentor or
+admin issue a "Hall of Opportunity" certificate for that match
+(`POST /api/certificates/issue`, gated to the `MENTOR`/`ADMIN` roles
+server-side, not just hidden in the UI). `issueCertificate()`
+(`src/data/mock.ts`) stamps the industry (pathway name), issue date and
+time, a "speed" label (elapsed time from `Match.requestedAt` to
+issuance), the applicant's current `readinessScore` as the grade, and
+the matched mentor's name, then `src/components/Certificate.tsx` renders
+it with the "Powered by Greenwood 100Inc and Help The Kids Win" footer
+and a "De'Aris Henry" signature — self-hosted via `next/font/google`'s
+Dancing Script rather than the CSS generic `cursive` family, which has
+no reliable fallback on Linux and silently renders as plain serif there.
+
+There's no real workspace task/milestone completion tracking yet (the
+Tasks/Milestones tabs are still static display-only lists — see §8), so
+issuing a certificate isn't gated on an automated "100% done" check; a
+mentor or admin issues it once they've confirmed the applicant is ready.
+Wire it to real milestone completion once Tasks/Milestones stop being
+mock lists.
 
 ## 4. Data model
 
@@ -180,29 +272,40 @@ and a single Credentials provider. The session's `role` field
 `/login?callbackUrl=...` and wrong-role requests to `/unauthorized` for
 every path under `/admin`, `/mentor`, `/apply`, and `/workspace`.
 
-**This is demo-grade, not production-grade.** `src/lib/auth/users.ts` is a
-hardcoded list of four demo accounts (one per role) because there is no
-persisted `User` table yet (see §8). Before this touches any real
-applicant or mentor data — and especially before it touches anything a
-minor interacts with — replace it with: real password hashing (or drop
-Credentials entirely in favor of an OAuth/SSO provider), a Prisma-backed
-user lookup, and email verification. The middleware's role-gating logic
-itself (the `ROLE_GATES` table) is the part that should carry forward
-unchanged once the identity layer is real.
+**This is demo-grade, not production-grade.** `src/lib/auth/users.ts` seeds
+four hardcoded demo accounts (one per role) into an in-memory
+`REGISTERED_USERS` array — the same array `/register` (§2a) pushes new
+applicant signups into — because there is no persisted `User` table yet
+(see §8). Passwords are stored in plaintext in that array. Before this
+touches any real applicant or mentor data — and especially before it
+touches anything a minor interacts with — replace it with: real password
+hashing (or drop Credentials entirely in favor of an OAuth/SSO provider),
+a Prisma-backed user lookup, and email verification. The middleware's
+role-gating logic itself (the `ROLE_GATES` table) is the part that should
+carry forward unchanged once the identity layer is real.
 
 ## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
 
-- **Identity**: see §7 — the demo credential store is the main thing
-  standing between this scaffold and a real login system.
+- **Identity**: see §7 — the demo/in-memory credential store is the main
+  thing standing between this scaffold and a real login system. Every
+  registered account, every `MOCK_APPLICANTS` entry created at signup, and
+  every issued `Certificate` lives in module-scope arrays in
+  `src/data/mock.ts` / `src/lib/auth/users.ts` — they reset on every
+  server restart or cold start, and in a real multi-instance deployment
+  (e.g. Vercel serverless) different requests can hit different instances
+  with different in-memory state. This is fine for a single running demo
+  process; it is not durable storage.
 - **Persistence**: pages currently read `src/data/mock.ts`. Swap in Prisma
   queries once `DATABASE_URL` points at a real Postgres instance; the
   shapes in `src/types/index.ts` already mirror the Prisma models. This
   also unblocks per-user authorization (e.g. a mentor should only see
   their own matches, not just any role-gated route).
-- **Intake session**: `sessionStorage` is a placeholder for passing intake
-  answers to the recommendation page; move this server-side once
-  persistence exists so recommendations can be tied to a persisted
-  `ApplicantProfile`.
+- **Intake session**: `sessionStorage` is a placeholder for passing the
+  already-computed `RecommendationResult` from `/intake` to
+  `/recommendation` (the score itself is computed and persisted
+  server-side in `/api/intake/submit` — see §3 — this is just the
+  same-request UI handoff); move this server-side too once a real session
+  exists.
 - **LLM integration**: see §3 — `generatePathwayRecommendations` and the
   AI guide's conversational turns beyond the fixed welcome script are the
   two seams intended for a real model call.
@@ -214,12 +317,13 @@ unchanged once the identity layer is real.
   requested design is: the mirror leads to a Google Form, responses land
   in a Google Sheet, and a server-side job calls an LLM against that
   sheet's rows to produce the pathway recommendation (replacing the
-  client-side tag-matching stub in `generatePathwayRecommendations`).
-  This needs two things only the org can provide: (1) the Google Form
-  itself, or a service-account credential with Sheets API access, and
-  (2) an LLM API key set as an environment variable. Until those exist,
-  `/pathways/[slug]/intake` stays on the current sessionStorage +
-  tag-matching implementation as the interim mirror destination.
+  deterministic weighted-scoring stub in `generatePathwayRecommendations`,
+  §3). This needs two things only the org can provide: (1) the Google
+  Form itself, or a service-account credential with Sheets API access,
+  and (2) an LLM API key set as an environment variable. Until those
+  exist, `/pathways/[slug]/intake` stays on the current in-app form +
+  weighted-scoring implementation as the interim mirror destination —
+  it's a real scorer with real disqualification logic, just not an LLM.
 
 ## 9. Long-term vision
 

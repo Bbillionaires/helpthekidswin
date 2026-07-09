@@ -37,7 +37,7 @@ export default function MentorsHallPage() {
 
       <div className="relative z-10 mx-auto mt-14 flex max-w-5xl justify-center">
         <Link
-          href="/"
+          href="/?entered=1"
           className="rounded-full border border-white/30 px-6 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Back to the Hall of Opportunity

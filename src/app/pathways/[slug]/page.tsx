@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { getPathway, PATHWAYS } from "@/lib/pathways";
 import { getMentorsForPathway } from "@/data/mock";
 import { getRoomArt } from "@/lib/pathwayRooms";
@@ -9,9 +10,18 @@ export function generateStaticParams() {
   return PATHWAYS.map((pathway) => ({ slug: pathway.slug }));
 }
 
-export default function PathwayRoomPage({ params }: { params: { slug: string } }) {
+export default async function PathwayRoomPage({ params }: { params: { slug: string } }) {
   const pathway = getPathway(params.slug);
   if (!pathway) notFound();
+
+  // Anyone can browse the hallway and see every door — registration is
+  // only required once someone actually walks through one, so mentors and
+  // admins have a profile to track and a completed interview has an
+  // account to attach to (see ARCHITECTURE.md §2a).
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/register?callbackUrl=${encodeURIComponent(`/pathways/${pathway.slug}`)}`);
+  }
 
   const mentors = getMentorsForPathway(pathway.name);
   const room = getRoomArt(pathway.slug);
@@ -29,7 +39,7 @@ export default function PathwayRoomPage({ params }: { params: { slug: string } }
         >
           Begin Intake Interview
         </Link>
-        <Link href="/" className="text-sm text-white/50 hover:text-white">
+        <Link href="/?entered=1" className="text-sm text-white/50 hover:text-white">
           Back to the Hallway
         </Link>
       </main>
@@ -150,7 +160,7 @@ export default function PathwayRoomPage({ params }: { params: { slug: string } }
         </h1>
         <p className="max-w-xl text-sm text-white/60">{pathway.atmosphere}</p>
         <Link
-          href="/"
+          href="/?entered=1"
           className="mt-2 rounded-full border border-white/30 px-6 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Back to the Hallway

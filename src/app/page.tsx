@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,15 @@ import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
 export default function HomePage() {
   const [welcomed, setWelcomed] = useState(false);
+
+  // "Back to the Hallway" links (from a pathway room, etc.) point at
+  // /?entered=1 so returning here re-enters the interior hallway instead
+  // of resetting to the exterior welcome screen.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("entered") === "1") {
+      setWelcomed(true);
+    }
+  }, []);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-3 py-6">

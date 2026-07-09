@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { MOCK_APPLICANTS } from "@/data/mock";
 import { getPathway } from "@/lib/pathways";
+import { findQuestionPrompt } from "@/lib/ai/guide";
 
 export default function AdminApplicantsPage() {
   return (
@@ -51,6 +52,45 @@ export default function AdminApplicantsPage() {
                   );
                 })}
               </div>
+
+              {applicant.assessments.length > 0 && (
+                <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+                  <p className="text-xs uppercase tracking-widest text-hallway-gold">
+                    Intake Interviews
+                  </p>
+                  {applicant.assessments.map((assessment) => {
+                    const pathway = getPathway(assessment.pathwaySlug);
+                    return (
+                      <details key={assessment.id} className="rounded-lg bg-black/20 p-3">
+                        <summary className="cursor-pointer text-sm text-white/80">
+                          {pathway?.name ?? assessment.pathwaySlug} — fit score{" "}
+                          <span className="font-semibold text-hallway-gold">
+                            {assessment.score}%
+                          </span>{" "}
+                          <span className="text-white/40">
+                            ({new Date(assessment.completedAt).toLocaleString()})
+                          </span>
+                        </summary>
+                        <ul className="mt-2 space-y-1.5 text-xs text-white/60">
+                          {(assessment.responses ?? []).map((response) => (
+                            <li key={response.questionId}>
+                              <span className="text-white/40">
+                                {findQuestionPrompt(assessment.pathwaySlug, response.questionId)}
+                              </span>{" "}
+                              —{" "}
+                              <span className="text-white/80">
+                                {Array.isArray(response.answer)
+                                  ? response.answer.join(", ") || "—"
+                                  : response.answer || "—"}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           ))}
         </div>

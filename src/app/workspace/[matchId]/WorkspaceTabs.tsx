@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { ApplicantProfile, MentorProfile, Match } from "@/types";
+import { useRouter } from "next/navigation";
+import type { ApplicantProfile, Certificate as CertificateData, MentorProfile, Match } from "@/types";
 import type { CareerPathway } from "@/lib/pathways";
 import { evaluateMinorProtection, FLAG_LABELS } from "@/lib/safety/minorProtection";
+import { Certificate } from "@/components/Certificate";
 
 const TABS = [
   "Dashboard",
@@ -23,15 +25,32 @@ export function WorkspaceTabs({
   applicant,
   mentor,
   pathway,
+  certificates,
+  canIssueCertificate,
 }: {
   match: Match;
   applicant?: ApplicantProfile;
   mentor?: MentorProfile;
   pathway?: CareerPathway;
+  certificates: CertificateData[];
+  canIssueCertificate: boolean;
 }) {
+  const router = useRouter();
   const [tab, setTab] = useState<(typeof TABS)[number]>("Dashboard");
+  const [issuing, setIssuing] = useState(false);
   const protection = evaluateMinorProtection(match.minorProtection, applicant?.isMinor ?? false);
   const progress = 42;
+
+  async function issueCertificate() {
+    setIssuing(true);
+    await fetch("/api/certificates/issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ matchId: match.id }),
+    });
+    router.refresh();
+    setIssuing(false);
+  }
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
@@ -136,7 +155,23 @@ export function WorkspaceTabs({
         />
       )}
       {tab === "Certificates" && (
-        <EmptyState text="No certificates issued yet — they'll appear here as milestones are completed." />
+        <div className="space-y-6">
+          {certificates.length === 0 && (
+            <EmptyState text="No certificates issued yet — a mentor or admin can issue one once the applicant is ready." />
+          )}
+          {certificates.map((certificate) => (
+            <Certificate key={certificate.id} certificate={certificate} pathway={pathway} />
+          ))}
+          {canIssueCertificate && (
+            <button
+              onClick={issueCertificate}
+              disabled={issuing}
+              className="w-full rounded-full bg-hallway-gold py-3 font-semibold text-hallway-void transition hover:brightness-110 disabled:opacity-60"
+            >
+              {issuing ? "Issuing..." : "Issue Certificate"}
+            </button>
+          )}
+        </div>
       )}
     </main>
   );
