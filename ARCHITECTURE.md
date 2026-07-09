@@ -57,18 +57,45 @@ entering the hallway; the rest route to real pages (`/about`,
 
 ## 2a. Pathway rooms
 
-`/pathways/[slug]` is a themed "room," not a flat info page: a wall of
-`PictureFrame`s for mentors matched to that pathway
-(`getMentorsForPathway` in `src/data/mock.ts`, matched on
-`MentorProfile.careerSpecialties`), a second wall of frames for Practice
-Test / Application / Refer a Recruit, and one `Mirror` component — the
-room's entry point into the intake flow. Both `PictureFrame` and `Mirror`
-are plain link wrappers styled to fit the mansion aesthetic; neither
-depends on a per-room reference image, so every pathway gets the same
-treatment without needing 10 more pieces of art.
+`/pathways/[slug]` renders a real per-pathway reference image
+(`public/images/room-*.png`, one per pathway) rather than a CSS mockup.
+Each image was generated with a wall of blank picture frames (for
+mentors) plus a second wall of three frames labeled "Practice Test" /
+"Application" / "Refer a Recruit" plus one mirror — `src/lib/pathwayRooms.ts`
+holds the measured on-image coordinates (percent, like
+`hallwayHotspots.ts`/`exteriorHotspots.ts`) for all of it. The page then
+overlays real content into those blank frames: mentors matched to that
+pathway (`getMentorsForPathway` in `src/data/mock.ts`, matched loosely on
+`MentorProfile.careerSpecialties` so a suffix like "Healthcare (CNA, LPN,
+RN)" still matches a mentor tagged just "Healthcare"), and clickable
+regions over the practice-test/application/refer frames and the mirror
+(which leads into the intake flow).
 
-`/mentors` is the analogous "gallery" for the Mentorship nav tab — every
-`MOCK_MENTORS` entry as a frame, linking to `/mentors/[id]`.
+`ai-architect`'s source art doesn't follow this pattern — it's a sci-fi
+command-room render with wall monitors instead of blank frames, so its
+coordinates in `pathwayRooms.ts` are a best-effort adaptation (monitors
+double as mentor slots, a floor console splits into three for practice
+test/application/refer, a standing digital panel stands in for the
+mirror). Regenerate that one to match the other 9 for pixel-perfect
+alignment and consistent affordances (the other rooms show "Begin
+Interview" on mirror hover; this one doesn't have equivalent hover text
+for its three floor-console frames since they have no baked labels to
+match against).
+
+Any pathway without a `pathwayRooms.ts` entry falls back to a plain
+CSS info page (icon, atmosphere copy, intake link) — this is dead code
+today since all 10 pathways have art, but keeps the page from crashing
+if a new pathway is added before its room art exists.
+
+`/mentors` is the analogous "gallery" for the Mentorship nav tab —
+currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
+to `/mentors/[id]`. A reference image was supplied for this
+(`mentor-gallery.png`) but isn't wired in: it's a fully-rendered mockup
+with 20 baked-in fictional mentors (different names, different industry
+categories) rather than blank frames, so — same problem as the original
+hallway art's door labels — there's no clean way to overlay our actual
+mentor data into it. It'd need to be regenerated with blank frames, like
+the pathway rooms, before it can replace the CSS version.
 
 ## 3. Intake → AI recommendation → decision
 

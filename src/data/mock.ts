@@ -185,7 +185,7 @@ export const MOCK_MENTORS: MentorProfile[] = [
       "Charge nurse who mentors CNAs and LPNs pursuing their RN licensure through night school.",
     experienceYears: 16,
     certifications: ["RN", "BSN"],
-    careerSpecialties: ["Healthcare"],
+    careerSpecialties: ["Healthcare (CNA, LPN, RN)"],
     teachingSpecialties: ["NCLEX prep", "Clinical rotations"],
     availability: "Weekday afternoons",
     maxApprentices: 3,
@@ -298,5 +298,11 @@ export const MOCK_MATCHES: Match[] = [
 ];
 
 export function getMentorsForPathway(pathwayName: string): MentorProfile[] {
-  return MOCK_MENTORS.filter((mentor) => mentor.careerSpecialties.includes(pathwayName));
+  const target = pathwayName.toLowerCase();
+  return MOCK_MENTORS.filter((mentor) =>
+    mentor.careerSpecialties.some((specialty) => {
+      const s = specialty.toLowerCase();
+      return target.includes(s) || s.includes(target);
+    }),
+  );
 }
