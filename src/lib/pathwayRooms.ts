@@ -1,5 +1,5 @@
 /**
- * Per-pathway room art. Each image (public/images/room-*.png) was
+ * Per-pathway room art. Most images (public/images/room-*.png) were
  * generated with a wall of blank picture frames plus one mirror, in the
  * same 1536x1024 canvas as the hallway/exterior art. Coordinates below
  * are measured the same way as hallwayHotspots.ts / exteriorHotspots.ts
@@ -7,9 +7,10 @@
  *
  * `ai-architect`'s source art doesn't follow the blank-frame pattern (it's
  * a sci-fi command-room render with wall monitors instead of frames), so
- * its coordinates are a best-effort adaptation, not a measured match —
- * regenerate that one to match the other 9 if pixel-perfect alignment
- * matters here.
+ * its coordinates are a best-effort adaptation, not a measured match.
+ * `cybersecurity` and `web-development-programming` deliberately reuse
+ * that same image (see the comment above `PATHWAY_ROOM_ART` below) rather
+ * than getting unique art.
  */
 
 export interface RoomSlot {
@@ -40,12 +41,34 @@ function evenRow(left: number, right: number, count: number, top: number, height
   }));
 }
 
+const NO_FRAME: RoomSlot = { top: 0, left: 0, width: 0, height: 0 };
+
 export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
+  // Cybersecurity, Web Development & Programming, and AI Architect all
+  // share the one "Technology Operations" room image — reached via the
+  // /lobbies/technology chooser, not its own door. Each pathway's mirror
+  // sits on a different set piece already in the image (the floor
+  // console, the wall of screens, the standing panel) so three different
+  // careers can share one render without fighting over the same hotspot.
+  // No blank frames exist for mentors/practice-test/application/refer in
+  // this shared context, so those are zeroed out for the two new ones —
+  // ai-architect below is unchanged and keeps its original layout since
+  // its mirror (the standing panel) never overlapped them.
   cybersecurity: {
-    image: "/images/room-cybersecurity.png",
-    mentorFrames: evenRow(18.5, 81, 5, 16.5, 20.5),
-    ...threeBottomFrames(27, 74, 39, 16),
-    mirror: { top: 30, left: 75, width: 16, height: 56 },
+    image: "/images/room-ai-architect.png",
+    mentorFrames: [],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 70, left: 31, width: 37, height: 22 },
+  },
+  "web-development-programming": {
+    image: "/images/room-ai-architect.png",
+    mentorFrames: [],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 16, left: 27, width: 46, height: 33 },
   },
   firefighter: {
     image: "/images/room-firefighter.png",

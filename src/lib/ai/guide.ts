@@ -241,33 +241,92 @@ export const PATHWAY_INTAKE_QUESTIONS: Record<string, IntakeQuestion[]> = {
       category: "pathway-specific",
     },
   ],
-  "business-acquisition-stock-trading": [
+  "web-development-programming": [
     {
-      id: "business-acquisition-focus",
-      prompt: "Which side interests you more?",
+      id: "web-dev-projects",
+      prompt: "Have you built any web or software projects, even small ones?",
       kind: "choice",
-      choices: ["Acquiring/running businesses", "Trading in the markets", "Both equally", "Not sure yet"],
+      choices: ["Yes, several", "One or two", "Not yet"],
       category: "pathway-specific",
     },
     {
-      id: "business-acquisition-risk",
-      prompt: "How comfortable are you with financial risk and market ups and downs?",
+      id: "web-dev-independent",
+      prompt: "Are you comfortable with mostly independent, screen-based work?",
       kind: "scale",
       category: "pathway-specific",
     },
   ],
-  "professional-careers": [
+  "business-acquisition": [
     {
-      id: "professional-careers-track",
-      prompt: "Which professional track interests you most?",
+      id: "business-acquisition-experience",
+      prompt: "Have you ever run, managed, or helped operate a business?",
       kind: "choice",
-      choices: ["Attorney", "Medical", "Accounting", "Advertiser", "Not sure yet"],
+      choices: ["Yes", "Some exposure", "Not yet"],
       category: "pathway-specific",
     },
     {
-      id: "professional-careers-education",
-      prompt: "Are you prepared for the years of schooling/licensing many professional tracks require?",
+      id: "business-acquisition-risk",
+      prompt: "How comfortable are you with financial risk in pursuit of growth?",
       kind: "scale",
+      category: "pathway-specific",
+    },
+  ],
+  "stock-trading": [
+    {
+      id: "stock-trading-experience",
+      prompt: "Have you traded stocks or studied the markets before?",
+      kind: "choice",
+      choices: ["Yes, actively", "A little", "Not yet"],
+      category: "pathway-specific",
+    },
+    {
+      id: "stock-trading-risk",
+      prompt: "How comfortable are you with market ups and downs?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+  ],
+  attorney: [
+    {
+      id: "attorney-education",
+      prompt: "Are you prepared for the years of schooling and the bar exam law requires?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+    {
+      id: "attorney-argument",
+      prompt: "How comfortable are you with debate, argument, and public speaking?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+  ],
+  accounting: [
+    {
+      id: "accounting-detail",
+      prompt: "How comfortable are you with detailed, numbers-heavy work?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+    {
+      id: "accounting-cpa",
+      prompt: "Are you open to pursuing a CPA certification?",
+      kind: "choice",
+      choices: ["Yes", "Maybe", "Not sure yet"],
+      category: "pathway-specific",
+    },
+  ],
+  advertiser: [
+    {
+      id: "advertiser-creative",
+      prompt: "How comfortable are you pitching creative ideas to others?",
+      kind: "scale",
+      category: "pathway-specific",
+    },
+    {
+      id: "advertiser-portfolio",
+      prompt: "Do you have any creative work (writing, design, video, campaigns) you could show?",
+      kind: "choice",
+      choices: ["Yes, a portfolio", "A little", "Not yet"],
       category: "pathway-specific",
     },
   ],
