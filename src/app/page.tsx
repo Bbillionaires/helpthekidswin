@@ -173,8 +173,8 @@ export default function HomePage() {
 
               {HALLWAY_HOTSPOTS.map((hotspot) => (
                 <Link
-                  key={hotspot.pathwaySlug}
-                  href={`/pathways/${hotspot.pathwaySlug}`}
+                  key={hotspot.imageLabel}
+                  href={hotspot.href}
                   title={hotspot.imageLabel}
                   className="group absolute flex items-center justify-center rounded-md transition"
                   style={{

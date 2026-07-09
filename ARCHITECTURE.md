@@ -38,35 +38,58 @@ regions layered over each painted door.
 
 `src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
 in percent via a grid overlay, so it scales with the rendered image) to
-a pathway slug. The interior image has 11 painted doors against 12
+a target `href`. The interior image has 11 painted doors against 16
 pathways today (an update added a proper "Military" door in place of the
-old center entrance; a later update added two pathways, see below) — 6
-line up by name (Merchant Marine, Longshoremen, Police Officer,
-Military, Firefighter, Truck Driver), 2 more are thematic fits (Real
-Estate → Construction & Skilled Trades, Technology Innovation → AI
-Architect), and the remaining 3 doors (Attorney, Stock Investments,
-Business Acquisition) point at two new pathways added specifically for
-them: Attorney and Stock Investments both lead to **Professional
-Careers** (Attorney/Medical/Accounting/Advertiser as its sub-specialties
-— two doors, one room), and Business Acquisition leads to **Business
-Acquisition & Stock Trading**. That repurposing frees Cybersecurity and
-Healthcare from the arbitrary door assignments they used to hold
-(Attorney → Cybersecurity, Business Acquisition → Healthcare), which
-means they currently have **no hallway door at all** — they keep their
-full rooms, mentors, and content, they're just only reachable by a
-direct link, not by walking through a door. This was a judgment call
-made without user confirmation (the clarifying-question tool failed
-mid-conversation) — the lowest-risk option since it needs no new art and
-loses no existing content, but revisit it if you'd rather fold
-Cybersecurity/Healthcare into one of the new rooms or commission a new
-image with doors for them (the same way the Military door was added).
+old center entrance) — 6 line up by name (Merchant Marine, Longshoremen,
+Police Officer, Military, Firefighter, Truck Driver), 1 more is a
+thematic fit (Real Estate → Construction & Skilled Trades), and the
+remaining 4 doors each cover more than one career, so they lead to a
+**lobby** (§2a) instead of a pathway directly: Technology Innovation →
+the Technology lobby; Attorney and Stock Investments both → the
+Professional Careers lobby (two doors, one lobby — this also fixes the
+old "Attorney door leads to Cybersecurity" mismatch); Business
+Acquisition → the Business Acquisition & Stock Trading lobby.
 `PATHWAYS` (`src/lib/pathways.ts`) still defines the gradient/icon/
 atmosphere metadata used on each pathway's own page; it's no longer used
-to render doors directly on the homepage. `/pathways/[slug]` requires a
-working image at `public/images/` — if a different/updated reference
-image is dropped in, `hallwayHotspots.ts` coordinates will need
+to render doors directly on the homepage. `/pathways/[slug]` requires
+either a working image at `public/images/` or falls back to a plain CSS
+page (see §2c) — if the hallway's reference image is ever
+updated/replaced, `hallwayHotspots.ts` coordinates will need
 re-measuring to match. `/hall-of-opportunity` is kept as a redirect to
 `/` for any old links.
+
+### 2a. Lobbies — one door, several careers
+
+Some doors' painted labels don't map to a single pathway (Technology
+Innovation covers three tech careers; the Professional Careers list is
+four professions on their own). `src/lib/lobbies.ts` models this as a
+**lobby**: a shared entry room with no intake of its own, whose items
+each link straight to a real pathway. `/lobbies/[slug]/page.tsx` renders
+it one of two ways depending on whether the lobby has unique art:
+
+- **Technology** reuses `room-ai-architect.png` (the existing sci-fi
+  command-room render) — it already has three distinct set pieces, so
+  three bold, always-visible (not hover-only, per an explicit
+  readability requirement) labels are overlaid directly on them: the
+  floor console table → Cybersecurity, the wall of six screens → Web
+  Development & Programming, the standing panel → AI Architect (AI
+  Development). Each of those three pathways then reuses the *same*
+  image again as its own room (see §2c) — "disregard the [dedicated]
+  cybersecurity room, use the generalized tech room" was the explicit
+  instruction that produced this.
+- **Professional Careers** (Attorney / Medical / Accounting /
+  Advertiser) and **Business Acquisition & Stock Trading** (Business
+  Acquisition / Stock Trading) have no shared art, so they render as a
+  plain bold-labeled card grid instead — same "click this, land on that
+  pathway's own room" contract, just without an image to overlay.
+
+"Medical" deliberately routes to the existing `healthcare` pathway
+rather than a new one — it already has full room art and mentors, and
+folding it in here happens to restore the hallway reachability it lost
+when the Attorney door was repointed away from it (see the git history
+around this section for that intermediate state). `/lobbies/[slug]`
+carries the same registration gate as room entry (§2b) — reaching a
+lobby is still "walking through a door."
 
 The exterior image's painted nav bar (Home / About / Opportunities /
 Mentorship / Resources / Contact / "Enter Your Future") is made
@@ -75,26 +98,27 @@ coordinates. "Opportunities" and "Enter Your Future" both just trigger
 entering the hallway; the rest route to real pages (`/about`,
 `/mentors`, `/resources`, `/contact`).
 
-`src/app/page.tsx` is a thin server component (calls `auth()` to know
-whether to gate entry — see §7a) that renders `HomeExperience`
-(`src/app/HomeExperience.tsx`), the actual client component holding the
-exterior/interior toggle. That toggle (`welcomed` state) is local
-component state, which resets on a full navigation — so every "Back to
-the Hallway" / "Explore Another Door" / "Back to the Hall of
-Opportunity" link across the app points at `/?entered=1` rather than
-plain `/`; `HomeExperience` reads that query param on mount and jumps
-straight to the interior instead of replaying the exterior welcome
-screen. Plain `/` (e.g. the navbar logo) intentionally still resets to
-the exterior.
+`src/app/page.tsx` is a client component holding the exterior/interior
+toggle (`welcomed` state). Registration isn't gated here at all — see
+§2b, the gate is one step later, at room/lobby entry — so this page
+needs no server-side auth check. `welcomed` is local component state,
+which resets on a full navigation — so every "Back to the Hallway" /
+"Explore Another Door" / "Back to the Hall of Opportunity" link across
+the app points at `/?entered=1` rather than plain `/`; the homepage
+reads that query param on mount and jumps straight to the interior
+instead of replaying the exterior welcome screen. Plain `/` (e.g. the
+navbar logo) intentionally still resets to the exterior.
 
-### 2a. Registration gate
+### 2b. Registration gate
 
 Anyone can click "Enter" and browse the full hallway — every painted
 door, hovering to see its label — without an account. Registration is
-gated one step later, at **room entry**: `/pathways/[slug]/page.tsx`
-calls `auth()` server-side and, if there's no session, `redirect()`s to
-`/register?callbackUrl=/pathways/{slug}` before rendering any room
-content (mentors, practice test, the mirror). This is a deliberate
+gated one step later, at **room or lobby entry**: both
+`/pathways/[slug]/page.tsx` and `/lobbies/[slug]/page.tsx` call `auth()`
+server-side and, if there's no session, `redirect()` to
+`/register?callbackUrl=...` (back to whichever one was requested) before
+rendering any content (mentors, practice test, the mirror, or a lobby's
+item list). This is a deliberate
 middle ground — gating at the front door turned away curious visitors
 before they'd seen anything; deferring all the way to the mirror would
 let people browse every room anonymously. Room entry is the point where
@@ -108,11 +132,11 @@ then `createApplicantProfile()` (`src/data/mock.ts`) before signing the
 new account in and redirecting back to the `callbackUrl`. See §7 for the
 same demo-grade caveat that already applied to login.
 
-## 2a. Pathway rooms
+## 2c. Pathway rooms
 
 `/pathways/[slug]` renders a real per-pathway reference image
 (`public/images/room-*.png`, one per pathway) rather than a CSS mockup.
-Each image was generated with a wall of blank picture frames (for
+Most images were generated with a wall of blank picture frames (for
 mentors) plus a second wall of three frames labeled "Practice Test" /
 "Application" / "Refer a Recruit" plus one mirror — `src/lib/pathwayRooms.ts`
 holds the measured on-image coordinates (percent, like
@@ -124,22 +148,28 @@ RN)" still matches a mentor tagged just "Healthcare"), and clickable
 regions over the practice-test/application/refer frames and the mirror
 (which leads into the intake flow).
 
-`ai-architect`'s source art doesn't follow this pattern — it's a sci-fi
-command-room render with wall monitors instead of blank frames, so its
-coordinates in `pathwayRooms.ts` are a best-effort adaptation (monitors
-double as mentor slots, a floor console splits into three for practice
-test/application/refer, a standing digital panel stands in for the
-mirror). Regenerate that one to match the other 9 for pixel-perfect
-alignment and consistent affordances (the other rooms show "Begin
-Interview" on mirror hover; this one doesn't have equivalent hover text
-for its three floor-console frames since they have no baked labels to
-match against).
+`ai-architect`'s source art doesn't follow the blank-frame pattern — it's
+a sci-fi command-room render with wall monitors instead of frames, so its
+coordinates are a best-effort adaptation (monitors double as mentor
+slots, a floor console splits into three for practice test/application/
+refer, a standing digital panel stands in for the mirror). `cybersecurity`
+and `web-development-programming` deliberately reuse this exact same
+image rather than getting unique art of their own — they're the other
+two doors behind the Technology lobby (§2a), and giving each its own
+mirror on a different set piece (the floor console, the wall of screens)
+was cheaper and more consistent than commissioning two more renders.
+Since neither has blank frames to work with, their `pathwayRooms.ts`
+entries skip mentor/practice-test/application/refer entirely (zeroed-out
+`RoomSlot`s) and define only a `mirror` — every pathway that has a room
+at all still has a mirror, that's just the one interactive element for
+these two.
 
 Any pathway without a `pathwayRooms.ts` entry falls back to a plain
-CSS info page (icon, atmosphere copy, intake link) — no longer dead code:
-`business-acquisition-stock-trading` and `professional-careers` (see §2)
-have no room art yet, so they render this fallback until images for them
-exist. They also have no `MOCK_MENTORS` entries yet for the same reason.
+CSS info page (icon, atmosphere copy, intake link) — this covers
+`attorney`, `accounting`, `advertiser`, `business-acquisition`, and
+`stock-trading`, the five new professional/business pathways that have
+no unique room art yet. They also have no `MOCK_MENTORS` entries yet for
+the same reason.
 
 `/mentors` is the analogous "gallery" for the Mentorship nav tab —
 currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
