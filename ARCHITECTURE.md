@@ -38,34 +38,46 @@ regions layered over each painted door.
 
 `src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
 in percent via a grid overlay, so it scales with the rendered image) to
-a target `href`. The interior image has 11 painted doors against 16
-pathways today (an update added a proper "Military" door in place of the
-old center entrance) — 6 line up by name (Merchant Marine, Longshoremen,
-Police Officer, Military, Firefighter, Truck Driver), 1 more is a
-thematic fit (Real Estate → Construction & Skilled Trades), and the
-remaining 4 doors each cover more than one career, so they lead to a
-**lobby** (§2a) instead of a pathway directly: Technology Innovation →
-the Technology lobby; Attorney and Stock Investments both → the
-Professional Careers lobby (two doors, one lobby — this also fixes the
-old "Attorney door leads to Cybersecurity" mismatch); Business
-Acquisition → the Business Acquisition & Stock Trading lobby.
-`PATHWAYS` (`src/lib/pathways.ts`) still defines the gradient/icon/
-atmosphere metadata used on each pathway's own page; it's no longer used
-to render doors directly on the homepage. `/pathways/[slug]` requires
-either a working image at `public/images/` or falls back to a plain CSS
-page (see §2c) — if the hallway's reference image is ever
-updated/replaced, `hallwayHotspots.ts` coordinates will need
-re-measuring to match. `/hall-of-opportunity` is kept as a redirect to
-`/` for any old links.
+a target `href`. The interior image (second version — the org repainted
+it to say "PROFESSIONAL CAREERS" and "BUSINESS ACQUISITION & STOCK
+TRADING" directly on the doors themselves, with "ATTORNEY" kept as its
+own separate door and a Medical/Accounting breakdown baked into a bottom
+banner) has 11 painted doors against 16 pathways today — 6 line up by
+name (Merchant Marine, Longshoremen, Police Officer, Military,
+Firefighter, Truck Driver), 2 more are direct matches (Attorney →
+`attorney`; Real Estate → Construction & Skilled Trades, a thematic
+rather than literal fit), and the remaining 3 doors each cover more than
+one career, so they lead to a **lobby** (§2a) instead of a pathway
+directly: Professional Careers → Medical, Accounting; Business
+Acquisition & Stock Trading → Business Acquisition, Stock Trading;
+Technology Innovation → Cybersecurity, Web Development & Programming,
+AI Architect. `PATHWAYS` (`src/lib/pathways.ts`) still defines the
+gradient/icon/atmosphere metadata used on each pathway's own page; it's
+no longer used to render doors directly on the homepage. `/pathways/[slug]`
+requires either a working image at `public/images/` or falls back to a
+plain CSS page (see §2c) — if the hallway's reference image is ever
+updated/replaced again, `hallwayHotspots.ts` coordinates will need
+re-measuring to match (this particular update happened to keep every
+door's position identical to the first version, only the painted labels
+changed, so the coordinates carried over unchanged). `/hall-of-opportunity`
+is kept as a redirect to `/` for any old links.
+
+**`advertiser` currently has no hallway door or lobby item at all** —
+the first version of the interior image's Professional Careers lobby
+included it, but this second version's door caption and bottom banner
+only list Medical and Accounting, so it was dropped to match the art
+exactly. The pathway itself, its intake questions, and its fallback room
+page all still work; it's just unreachable by walking through anything
+today. Worth flagging back to whoever's iterating on the art.
 
 ### 2a. Lobbies — one door, several careers
 
 Some doors' painted labels don't map to a single pathway (Technology
-Innovation covers three tech careers; the Professional Careers list is
-four professions on their own). `src/lib/lobbies.ts` models this as a
-**lobby**: a shared entry room with no intake of its own, whose items
-each link straight to a real pathway. `/lobbies/[slug]/page.tsx` renders
-it one of two ways depending on whether the lobby has unique art:
+Innovation covers three tech careers; Professional Careers covers two
+professions). `src/lib/lobbies.ts` models this as a **lobby**: a shared
+entry room with no intake of its own, whose items each link straight to
+a real pathway. `/lobbies/[slug]/page.tsx` renders it one of two ways
+depending on whether the lobby has unique art:
 
 - **Technology** reuses `room-ai-architect.png` (the existing sci-fi
   command-room render) — it already has three distinct set pieces, so
@@ -77,19 +89,16 @@ it one of two ways depending on whether the lobby has unique art:
   image again as its own room (see §2c) — "disregard the [dedicated]
   cybersecurity room, use the generalized tech room" was the explicit
   instruction that produced this.
-- **Professional Careers** (Attorney / Medical / Accounting /
-  Advertiser) and **Business Acquisition & Stock Trading** (Business
-  Acquisition / Stock Trading) have no shared art, so they render as a
-  plain bold-labeled card grid instead — same "click this, land on that
-  pathway's own room" contract, just without an image to overlay.
+- **Professional Careers** (Medical / Accounting) and **Business
+  Acquisition & Stock Trading** (Business Acquisition / Stock Trading)
+  have no shared art, so they render as a plain bold-labeled card grid
+  instead — same "click this, land on that pathway's own room" contract,
+  just without an image to overlay.
 
 "Medical" deliberately routes to the existing `healthcare` pathway
-rather than a new one — it already has full room art and mentors, and
-folding it in here happens to restore the hallway reachability it lost
-when the Attorney door was repointed away from it (see the git history
-around this section for that intermediate state). `/lobbies/[slug]`
-carries the same registration gate as room entry (§2b) — reaching a
-lobby is still "walking through a door."
+rather than a new one — it already has full room art and mentors.
+`/lobbies/[slug]` carries the same registration gate as room entry
+(§2b) — reaching a lobby is still "walking through a door."
 
 The exterior image's painted nav bar (Home / About / Opportunities /
 Mentorship / Resources / Contact / "Enter Your Future") is made

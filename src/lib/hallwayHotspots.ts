@@ -4,23 +4,31 @@
  * the image via a percent-grid overlay, so they scale with the rendered
  * image size).
  *
- * This image's 11 painted doors don't map 1:1 onto our pathways:
- * - 6 line up exactly by name: Merchant Marine, Longshoremen, Police
- *   Officer, Military, Firefighter, Truck Driver.
- * - Real Estate → Construction & Skilled Trades is a thematic fit, not a
- *   literal match.
- * - Technology Innovation, Attorney/Stock Investments, and Business
- *   Acquisition each cover MORE than one pathway, so they lead to a
- *   `href` (a /lobbies/[slug] chooser — src/lib/lobbies.ts) instead of a
- *   single pathway directly:
- *     - Technology Innovation → the Technology lobby (Cybersecurity, Web
- *       Development & Programming, AI Architect)
- *     - Attorney and Stock Investments both → the Professional Careers
- *       lobby (Attorney, Medical, Accounting, Advertiser) — two doors,
- *       one lobby, which also fixes the old "Attorney door leads to
- *       Cybersecurity" mismatch
- *     - Business Acquisition → the Business Acquisition & Stock Trading
- *       lobby (Business Acquisition, Stock Trading)
+ * This is the second version of this image — the first painted "Stock
+ * Investments" and "Attorney" as separate doors with no home for a
+ * combined professional-careers concept; this one repaints the upper
+ * gallery to say "PROFESSIONAL CAREERS" (with a Medical/Accounting
+ * breakdown baked into the art itself) and "BUSINESS ACQUISITION &
+ * STOCK TRADING" directly, and keeps "ATTORNEY" as its own separate
+ * door. Door positions are unchanged from the previous version — only
+ * the labels/targets below changed to match the new painted text:
+ * - 6 doors line up exactly by name: Merchant Marine, Longshoremen,
+ *   Police Officer, Military, Firefighter, Truck Driver.
+ * - Real Estate → Construction & Skilled Trades is a thematic fit.
+ * - Attorney now leads straight to its own pathway (no lobby detour,
+ *   since the art itself gives it a dedicated door).
+ * - Professional Careers, Business Acquisition & Stock Trading, and
+ *   Technology Innovation each cover more than one career, so they lead
+ *   to a `href` (a /lobbies/[slug] chooser — src/lib/lobbies.ts):
+ *     - Professional Careers → Medical, Accounting (the art's own
+ *       bottom banner lists exactly these two — Attorney split off into
+ *       its own door, and Advertiser isn't painted anywhere in this
+ *       version, so it currently has no hallway door at all; see
+ *       ARCHITECTURE.md)
+ *     - Business Acquisition & Stock Trading → Business Acquisition,
+ *       Stock Trading
+ *     - Technology Innovation → Cybersecurity, Web Development &
+ *       Programming, AI Architect
  */
 
 export interface HallwayHotspot {
@@ -34,10 +42,10 @@ export interface HallwayHotspot {
 
 export const HALLWAY_HOTSPOTS: HallwayHotspot[] = [
   // Upper gallery
-  { href: "/lobbies/professional-careers", imageLabel: "Stock Investments", top: 8, left: 2, width: 15, height: 30 },
-  { href: "/lobbies/professional-careers", imageLabel: "Attorney", top: 8, left: 19, width: 14, height: 30 },
+  { href: "/lobbies/professional-careers", imageLabel: "Professional Careers", top: 8, left: 2, width: 15, height: 30 },
+  { href: "/pathways/attorney", imageLabel: "Attorney", top: 8, left: 19, width: 14, height: 30 },
   { href: "/pathways/construction-skilled-trades", imageLabel: "Real Estate", top: 8, left: 68, width: 14, height: 30 },
-  { href: "/lobbies/business-acquisition-stock-trading", imageLabel: "Business Acquisition", top: 8, left: 84, width: 14, height: 30 },
+  { href: "/lobbies/business-acquisition-stock-trading", imageLabel: "Business Acquisition & Stock Trading", top: 8, left: 84, width: 14, height: 30 },
 
   // Lower gallery
   { href: "/pathways/merchant-marine", imageLabel: "Merchant Marine", top: 44, left: 5, width: 12, height: 24 },
