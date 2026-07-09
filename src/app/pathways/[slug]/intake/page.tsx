@@ -9,6 +9,7 @@ export default function IntakePage({ params }: { params: { slug: string } }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [responses, setResponses] = useState<Record<string, string | string[]>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   const questions = getIntakeQuestions(params.slug);
   const question = questions[step] ?? questions[0]!;
@@ -18,13 +19,20 @@ export default function IntakePage({ params }: { params: { slug: string } }) {
     setResponses((prev) => ({ ...prev, [question.id]: value }));
   }
 
-  function next() {
+  async function next() {
     if (isLast) {
+      setSubmitting(true);
       const payload: IntakeResponse[] = questions.map((q) => ({
         questionId: q.id,
         answer: responses[q.id] ?? "",
       }));
-      sessionStorage.setItem(INTAKE_STORAGE_KEY, JSON.stringify(payload));
+      const res = await fetch("/api/intake/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pathwaySlug: params.slug, responses: payload }),
+      });
+      const result = await res.json();
+      sessionStorage.setItem(INTAKE_STORAGE_KEY, JSON.stringify(result));
       router.push(`/pathways/${params.slug}/recommendation`);
       return;
     }
@@ -118,9 +126,10 @@ export default function IntakePage({ params }: { params: { slug: string } }) {
 
         <button
           onClick={next}
-          className="mt-8 w-full rounded-full bg-hallway-gold py-3 font-semibold text-hallway-void transition hover:brightness-110"
+          disabled={submitting}
+          className="mt-8 w-full rounded-full bg-hallway-gold py-3 font-semibold text-hallway-void transition hover:brightness-110 disabled:opacity-60"
         >
-          {isLast ? "See My Recommendations" : "Next"}
+          {submitting ? "Analyzing your answers..." : isLast ? "See My Recommendations" : "Next"}
         </button>
       </div>
     </main>

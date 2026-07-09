@@ -41,6 +41,8 @@ export interface AssessmentResult {
   score: number;
   maxScore: number;
   completedAt: string;
+  /** Raw intake question/answer pairs, kept alongside the score so a mentor or admin can see exactly how the applicant answered. */
+  responses?: Array<{ questionId: string; answer: string | string[] }>;
 }
 
 export interface PathwayRecommendation {
@@ -116,4 +118,8 @@ export interface Certificate {
   title: string;
   issuedAt: string;
   pathwaySlug: string;
+  applicantName: string;
+  mentorName: string;
+  grade: number | null;
+  speedLabel: string;
 }

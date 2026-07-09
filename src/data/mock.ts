@@ -3,7 +3,7 @@
  * a live database (see prisma/schema.prisma and ARCHITECTURE.md).
  */
 
-import type { ApplicantProfile, MentorProfile, Match } from "@/types";
+import type { ApplicantProfile, AssessmentResult, Certificate, MentorProfile, Match } from "@/types";
 
 export const MOCK_APPLICANTS: ApplicantProfile[] = [
   {
@@ -305,4 +305,119 @@ export function getMentorsForPathway(pathwayName: string): MentorProfile[] {
       return target.includes(s) || s.includes(target);
     }),
   );
+}
+
+function ageFromDateOfBirth(dateOfBirth: string): number {
+  const dob = new Date(dateOfBirth);
+  if (Number.isNaN(dob.getTime())) return 18;
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const hasHadBirthdayThisYear =
+    now.getMonth() > dob.getMonth() ||
+    (now.getMonth() === dob.getMonth() && now.getDate() >= dob.getDate());
+  if (!hasHadBirthdayThisYear) age -= 1;
+  return age;
+}
+
+/**
+ * Mutates MOCK_APPLICANTS in place so every server-rendered page in this
+ * process (admin, mentor, workspace) sees the new applicant immediately —
+ * there's no persisted User/ApplicantProfile table yet (see
+ * ARCHITECTURE.md §8), so this in-memory array is the applicant "database"
+ * until Prisma is wired to a real Postgres instance. It resets on every
+ * server restart / cold start, same limitation as src/lib/auth/users.ts.
+ */
+export function createApplicantProfile(input: {
+  userId: string;
+  displayName: string;
+  dateOfBirth?: string;
+}): ApplicantProfile {
+  const profile: ApplicantProfile = {
+    id: `app_${input.userId}`,
+    userId: input.userId,
+    displayName: input.displayName,
+    dateOfBirth: input.dateOfBirth,
+    isMinor: input.dateOfBirth ? ageFromDateOfBirth(input.dateOfBirth) < 18 : false,
+    careerProfile: { goals: "", interests: [], availability: "" },
+    personality: {},
+    skills: [],
+    education: "",
+    certifications: [],
+    accomplishments: [],
+    physicalRequirementsAck: false,
+    transportation: "not-applicable",
+    location: { city: "", state: "", zip: "" },
+    assessments: [],
+    readinessScore: undefined,
+  };
+  MOCK_APPLICANTS.push(profile);
+  return profile;
+}
+
+export function getApplicantByUserId(userId: string): ApplicantProfile | undefined {
+  return MOCK_APPLICANTS.find((applicant) => applicant.userId === userId);
+}
+
+/** Stores the intake score and raw answers on the applicant's own profile. */
+export function recordIntakeAssessment(
+  userId: string,
+  result: { pathwaySlug: string; score: number; responses: Array<{ questionId: string; answer: string | string[] }> },
+): AssessmentResult | undefined {
+  const applicant = getApplicantByUserId(userId);
+  if (!applicant) return undefined;
+
+  const assessment: AssessmentResult = {
+    id: `assess_${applicant.id}_${applicant.assessments.length + 1}`,
+    type: "skills-assessment",
+    pathwaySlug: result.pathwaySlug,
+    score: result.score,
+    maxScore: 100,
+    completedAt: new Date().toISOString(),
+    responses: result.responses,
+  };
+  applicant.assessments.push(assessment);
+  applicant.readinessScore = result.score;
+  return assessment;
+}
+
+export const MOCK_CERTIFICATES: Certificate[] = [];
+
+function formatSpeed(fromIso: string, toIso: string): string {
+  const days = Math.max(
+    0,
+    Math.round((new Date(toIso).getTime() - new Date(fromIso).getTime()) / (1000 * 60 * 60 * 24)),
+  );
+  if (days === 0) return "Same day";
+  if (days === 1) return "1 day";
+  if (days < 14) return `${days} days`;
+  return `${Math.round(days / 7)} weeks`;
+}
+
+/**
+ * Issues a Hall of Opportunity certificate for a completed match. There's
+ * no real workspace task/milestone completion tracking yet (see
+ * ARCHITECTURE.md §8), so this is available on demand from the
+ * Certificates tab rather than gated on an automated "100% done" check —
+ * a mentor or admin issues it once they've confirmed the applicant is
+ * ready.
+ */
+export function issueCertificate(match: Match, applicant?: ApplicantProfile, mentor?: MentorProfile): Certificate {
+  const issuedAt = new Date().toISOString();
+  const certificate: Certificate = {
+    id: `cert_${match.id}_${MOCK_CERTIFICATES.length + 1}`,
+    matchId: match.id,
+    title: "Certificate of Completion",
+    issuedAt,
+    pathwaySlug: match.pathwaySlug,
+    applicantName: applicant?.displayName ?? "Unknown Applicant",
+    mentorName: mentor?.displayName ?? "Unassigned Mentor",
+    grade: applicant?.readinessScore ?? null,
+    speedLabel: formatSpeed(match.requestedAt, issuedAt),
+  };
+  MOCK_CERTIFICATES.push(certificate);
+  return certificate;
+}
+
+export function getCertificatesForMatch(matchId: string): Certificate[] {
+  return MOCK_CERTIFICATES.filter((c) => c.matchId === matchId);
 }

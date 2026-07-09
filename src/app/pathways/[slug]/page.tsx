@@ -29,7 +29,7 @@ export default function PathwayRoomPage({ params }: { params: { slug: string } }
         >
           Begin Intake Interview
         </Link>
-        <Link href="/" className="text-sm text-white/50 hover:text-white">
+        <Link href="/?entered=1" className="text-sm text-white/50 hover:text-white">
           Back to the Hallway
         </Link>
       </main>
@@ -150,7 +150,7 @@ export default function PathwayRoomPage({ params }: { params: { slug: string } }
         </h1>
         <p className="max-w-xl text-sm text-white/60">{pathway.atmosphere}</p>
         <Link
-          href="/"
+          href="/?entered=1"
           className="mt-2 rounded-full border border-white/30 px-6 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Back to the Hallway
