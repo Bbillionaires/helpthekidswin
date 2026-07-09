@@ -38,12 +38,23 @@ regions layered over each painted door.
 
 `src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
 in percent via a grid overlay, so it scales with the rendered image) to
-a target `href`. The interior image (second version — the org repainted
-it to say "PROFESSIONAL CAREERS" and "BUSINESS ACQUISITION & STOCK
-TRADING" directly on the doors themselves, with "ATTORNEY" kept as its
-own separate door and a Medical/Accounting breakdown baked into a bottom
-banner) has 11 painted doors against 16 pathways today — 6 line up by
-name (Merchant Marine, Longshoremen, Police Officer, Military,
+a target `href`. The interior image has gone through three revisions
+now — the first painted "Stock Investments" and "Attorney" as separate
+doors with no combined professional-careers door; the second repainted
+the upper gallery to say "PROFESSIONAL CAREERS" and "BUSINESS
+ACQUISITION & STOCK TRADING" directly, with "ATTORNEY" kept as its own
+door and a Medical/Accounting breakdown baked into a bottom banner; the
+third (current) is the same door layout and labels as the second on a
+white/cream marble background instead of dark bronze, without that
+bottom banner (the Medical/Accounting split lives in code — the
+Professional Careers lobby, §2a — not in the art, so dropping the banner
+changed nothing functionally). Door *positions* have stayed pixel-
+identical across all three revisions, only the rendering style and
+painted labels changed, so `hallwayHotspots.ts`'s coordinates have
+carried over unchanged each time — always re-measure and re-verify with
+a grid overlay if a future revision moves anything, rather than assuming
+that'll keep holding. 11 painted doors cover 16 pathways today — 6 line
+up by name (Merchant Marine, Longshoremen, Police Officer, Military,
 Firefighter, Truck Driver), 2 more are direct matches (Attorney →
 `attorney`; Real Estate → Construction & Skilled Trades, a thematic
 rather than literal fit), and the remaining 3 doors each cover more than
@@ -55,12 +66,8 @@ AI Architect. `PATHWAYS` (`src/lib/pathways.ts`) still defines the
 gradient/icon/atmosphere metadata used on each pathway's own page; it's
 no longer used to render doors directly on the homepage. `/pathways/[slug]`
 requires either a working image at `public/images/` or falls back to a
-plain CSS page (see §2c) — if the hallway's reference image is ever
-updated/replaced again, `hallwayHotspots.ts` coordinates will need
-re-measuring to match (this particular update happened to keep every
-door's position identical to the first version, only the painted labels
-changed, so the coordinates carried over unchanged). `/hall-of-opportunity`
-is kept as a redirect to `/` for any old links.
+plain CSS page (see §2c). `/hall-of-opportunity` is kept as a redirect
+to `/` for any old links.
 
 **`advertiser` currently has no hallway door or lobby item at all** —
 the first version of the interior image's Professional Careers lobby
