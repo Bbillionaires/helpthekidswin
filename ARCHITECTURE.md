@@ -37,21 +37,34 @@ photo (`public/images/hall-of-opportunity-interior.png`) with clickable
 regions layered over each painted door.
 
 `src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
-in percent, so it scales with the rendered image) to a pathway slug. The
-current interior image has 11 painted doors (an update added a proper
-"Military" door in place of the old center entrance) against our 10 real
-pathways — 6 line up by name (Merchant Marine, Longshoremen, Police
-Officer, Military, Firefighter, Truck Driver), 4 more are assigned to
-the closest thematic fit available (Real Estate → Construction & Skilled
-Trades, Technology Innovation → AI Architect) or arbitrarily where no
-fit exists (Attorney → Cybersecurity, Business Acquisition →
-Healthcare), and "Stock Investments" is intentionally left with no
-hotspot rather than pointed at an unrelated pathway. `PATHWAYS`
-(`src/lib/pathways.ts`) still defines the
-gradient/icon/atmosphere metadata used on each pathway's own page; it's
-no longer used to render doors directly on the homepage. `/pathways/[slug]`
-requires a working image at `public/images/` — if a different/updated
-reference image is dropped in, `hallwayHotspots.ts` coordinates will need
+in percent via a grid overlay, so it scales with the rendered image) to
+a pathway slug. The interior image has 11 painted doors against 12
+pathways today (an update added a proper "Military" door in place of the
+old center entrance; a later update added two pathways, see below) — 6
+line up by name (Merchant Marine, Longshoremen, Police Officer,
+Military, Firefighter, Truck Driver), 2 more are thematic fits (Real
+Estate → Construction & Skilled Trades, Technology Innovation → AI
+Architect), and the remaining 3 doors (Attorney, Stock Investments,
+Business Acquisition) point at two new pathways added specifically for
+them: Attorney and Stock Investments both lead to **Professional
+Careers** (Attorney/Medical/Accounting/Advertiser as its sub-specialties
+— two doors, one room), and Business Acquisition leads to **Business
+Acquisition & Stock Trading**. That repurposing frees Cybersecurity and
+Healthcare from the arbitrary door assignments they used to hold
+(Attorney → Cybersecurity, Business Acquisition → Healthcare), which
+means they currently have **no hallway door at all** — they keep their
+full rooms, mentors, and content, they're just only reachable by a
+direct link, not by walking through a door. This was a judgment call
+made without user confirmation (the clarifying-question tool failed
+mid-conversation) — the lowest-risk option since it needs no new art and
+loses no existing content, but revisit it if you'd rather fold
+Cybersecurity/Healthcare into one of the new rooms or commission a new
+image with doors for them (the same way the Military door was added).
+`PATHWAYS` (`src/lib/pathways.ts`) still defines the gradient/icon/
+atmosphere metadata used on each pathway's own page; it's no longer used
+to render doors directly on the homepage. `/pathways/[slug]` requires a
+working image at `public/images/` — if a different/updated reference
+image is dropped in, `hallwayHotspots.ts` coordinates will need
 re-measuring to match. `/hall-of-opportunity` is kept as a redirect to
 `/` for any old links.
 
@@ -123,9 +136,10 @@ for its three floor-console frames since they have no baked labels to
 match against).
 
 Any pathway without a `pathwayRooms.ts` entry falls back to a plain
-CSS info page (icon, atmosphere copy, intake link) — this is dead code
-today since all 10 pathways have art, but keeps the page from crashing
-if a new pathway is added before its room art exists.
+CSS info page (icon, atmosphere copy, intake link) — no longer dead code:
+`business-acquisition-stock-trading` and `professional-careers` (see §2)
+have no room art yet, so they render this fallback until images for them
+exist. They also have no `MOCK_MENTORS` entries yet for the same reason.
 
 `/mentors` is the analogous "gallery" for the Mentorship nav tab —
 currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
