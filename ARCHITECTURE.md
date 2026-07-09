@@ -38,9 +38,16 @@ regions layered over each painted door.
 
 `src/lib/hallwayHotspots.ts` maps each door's on-image position (measured
 in percent, so it scales with the rendered image) to a pathway slug. The
-reference art's painted door labels don't all match our 10 real pathways
-— see that file's comment for which 5 line up by name and how the other
-5 are assigned. `PATHWAYS` (`src/lib/pathways.ts`) still defines the
+current interior image has 11 painted doors (an update added a proper
+"Military" door in place of the old center entrance) against our 10 real
+pathways — 6 line up by name (Merchant Marine, Longshoremen, Police
+Officer, Military, Firefighter, Truck Driver), 4 more are assigned to
+the closest thematic fit available (Real Estate → Construction & Skilled
+Trades, Technology Innovation → AI Architect) or arbitrarily where no
+fit exists (Attorney → Cybersecurity, Business Acquisition →
+Healthcare), and "Stock Investments" is intentionally left with no
+hotspot rather than pointed at an unrelated pathway. `PATHWAYS`
+(`src/lib/pathways.ts`) still defines the
 gradient/icon/atmosphere metadata used on each pathway's own page; it's
 no longer used to render doors directly on the homepage. `/pathways/[slug]`
 requires a working image at `public/images/` — if a different/updated
