@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { getPathway, PATHWAYS } from "@/lib/pathways";
 import { getMentorsForPathway } from "@/data/mock";
 import { getRoomArt } from "@/lib/pathwayRooms";
@@ -9,9 +10,18 @@ export function generateStaticParams() {
   return PATHWAYS.map((pathway) => ({ slug: pathway.slug }));
 }
 
-export default function PathwayRoomPage({ params }: { params: { slug: string } }) {
+export default async function PathwayRoomPage({ params }: { params: { slug: string } }) {
   const pathway = getPathway(params.slug);
   if (!pathway) notFound();
+
+  // Anyone can browse the hallway and see every door — registration is
+  // only required once someone actually walks through one, so mentors and
+  // admins have a profile to track and a completed interview has an
+  // account to attach to (see ARCHITECTURE.md §2a).
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/register?callbackUrl=${encodeURIComponent(`/pathways/${pathway.slug}`)}`);
+  }
 
   const mentors = getMentorsForPathway(pathway.name);
   const room = getRoomArt(pathway.slug);

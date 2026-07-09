@@ -46,12 +46,12 @@ export default function RegisterPage({
           {FLAGSHIP_INITIATIVE.name}
         </p>
         <h1 className="mb-2 font-display text-2xl font-semibold text-white">
-          Register to Enter
+          Register to Step Through This Door
         </h1>
         <p className="mb-6 text-sm text-white/60">
-          Before you step inside the Hall of Opportunity, create your profile — it's how
-          mentors and administrators can follow your progress, and how your certificate
-          finds its way to you.
+          Before you walk into this room, create your profile — it's how mentors and
+          administrators can follow your progress, and how your certificate finds its way
+          to you.
         </p>
 
         {searchParams.error && (

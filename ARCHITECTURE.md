@@ -76,19 +76,24 @@ the exterior.
 
 ### 2a. Registration gate
 
-Clicking "Enter" (the front door, the nav hotspots, or the "Enter a New
-Career" button) checks `isAuthenticated` (passed down from the server
-component's `auth()` call). Signed-out visitors are redirected to
-`/register?callbackUrl=/?entered=1` instead of proceeding straight into
-the hallway — an applicant profile has to exist before anyone can walk
-through a door, both so mentors/admins have someone to track and so a
-completed pathway has an account for its certificate to land on (see
-§3 and §3a). `src/app/register/page.tsx` is a server-action form
-(same pattern as `/login`) that calls `registerUser()`
-(`src/lib/auth/users.ts`) then `createApplicantProfile()`
-(`src/data/mock.ts`) before signing the new account in and redirecting
-back to the `callbackUrl`. See §7 for the same demo-grade caveat that
-already applied to login.
+Anyone can click "Enter" and browse the full hallway — every painted
+door, hovering to see its label — without an account. Registration is
+gated one step later, at **room entry**: `/pathways/[slug]/page.tsx`
+calls `auth()` server-side and, if there's no session, `redirect()`s to
+`/register?callbackUrl=/pathways/{slug}` before rendering any room
+content (mentors, practice test, the mirror). This is a deliberate
+middle ground — gating at the front door turned away curious visitors
+before they'd seen anything; deferring all the way to the mirror would
+let people browse every room anonymously. Room entry is the point where
+an applicant profile actually starts to matter: mentors/admins need
+someone to track, and a completed interview needs an account for its
+score, answers, and eventual certificate to attach to (see §3 and §3a).
+After registering, the applicant lands back on the same room they tried
+to enter. `src/app/register/page.tsx` is a server-action form (same
+pattern as `/login`) that calls `registerUser()` (`src/lib/auth/users.ts`)
+then `createApplicantProfile()` (`src/data/mock.ts`) before signing the
+new account in and redirecting back to the `callbackUrl`. See §7 for the
+same demo-grade caveat that already applied to login.
 
 ## 2a. Pathway rooms
 
