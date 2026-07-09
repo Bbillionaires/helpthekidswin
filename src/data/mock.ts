@@ -93,6 +93,174 @@ export const MOCK_MENTORS: MentorProfile[] = [
       credentialsVerified: true,
     },
   },
+  {
+    id: "mentor_3",
+    userId: "user_12",
+    displayName: "Renata O.",
+    biography:
+      "20 years sailing merchant vessels, now a licensed captain training the next generation of mariners.",
+    experienceYears: 20,
+    certifications: ["USCG Master Captain's License"],
+    careerSpecialties: ["Merchant Marine"],
+    teachingSpecialties: ["Navigation", "Shipboard safety"],
+    availability: "Rotating schedule, 2 weeks on / 2 off",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Gulf Coast Shipping Co.",
+    accomplishments: ["Commanded 6 vessels across 3 oceans"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_4",
+    userId: "user_13",
+    displayName: "Sgt. Malik B.",
+    biography:
+      "Retired Army sergeant, now helps young recruits prepare physically and mentally for military service.",
+    experienceYears: 14,
+    certifications: ["Army Recruiter Certification"],
+    careerSpecialties: ["Military"],
+    teachingSpecialties: ["Physical training", "ASVAB prep"],
+    availability: "Weekday mornings",
+    maxApprentices: 4,
+    currentApprentices: 2,
+    employer: "U.S. Army (Ret.)",
+    accomplishments: ["Two combat tours", "Recruiter of the Year 2021"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_5",
+    userId: "user_14",
+    displayName: "Officer Priya D.",
+    biography:
+      "Patrol officer and community liaison, mentoring cadets through the academy application process.",
+    experienceYears: 11,
+    certifications: ["POST Certification"],
+    careerSpecialties: ["Police Officer"],
+    teachingSpecialties: ["Academy prep", "De-escalation training"],
+    availability: "Weekends",
+    maxApprentices: 2,
+    currentApprentices: 1,
+    employer: "Metro Police Department",
+    accomplishments: ["Community Policing Award 2023"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_6",
+    userId: "user_15",
+    displayName: "Captain Luis F.",
+    biography:
+      "Fire captain with two decades of experience, guiding recruits through CPAT prep and EMT certification.",
+    experienceYears: 21,
+    certifications: ["EMT-Paramedic", "Fire Officer III"],
+    careerSpecialties: ["Firefighter"],
+    teachingSpecialties: ["CPAT training", "EMT exam prep"],
+    availability: "Weekday evenings",
+    maxApprentices: 3,
+    currentApprentices: 1,
+    employer: "City Fire Department",
+    accomplishments: ["Led 200+ live rescue operations"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_7",
+    userId: "user_16",
+    displayName: "Denise W., RN",
+    biography:
+      "Charge nurse who mentors CNAs and LPNs pursuing their RN licensure through night school.",
+    experienceYears: 16,
+    certifications: ["RN", "BSN"],
+    careerSpecialties: ["Healthcare (CNA, LPN, RN)"],
+    teachingSpecialties: ["NCLEX prep", "Clinical rotations"],
+    availability: "Weekday afternoons",
+    maxApprentices: 3,
+    currentApprentices: 0,
+    employer: "St. Vincent Medical Center",
+    accomplishments: ["Mentored 25+ nurses to RN licensure"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_8",
+    userId: "user_17",
+    displayName: "Tomás R.",
+    biography:
+      "Long-haul CDL driver and fleet trainer, teaching new drivers the road and the business.",
+    experienceYears: 13,
+    certifications: ["CDL Class A", "DOT Certified Trainer"],
+    careerSpecialties: ["Truck Driver"],
+    teachingSpecialties: ["Road test prep", "Logbook compliance"],
+    availability: "Flexible",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Highline Freight",
+    accomplishments: ["2 million accident-free miles"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_9",
+    userId: "user_18",
+    displayName: "Aisha K.",
+    biography:
+      "Dockworker turned crane operator, mentoring apprentices through union registration and safety certification.",
+    experienceYears: 15,
+    certifications: ["Crane Operator Certification"],
+    careerSpecialties: ["Longshoremen"],
+    teachingSpecialties: ["Equipment safety", "Union onboarding"],
+    availability: "Weekday mornings",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Port Authority Local 40",
+    accomplishments: ["15 years without a safety incident"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_10",
+    userId: "user_19",
+    displayName: "Sam P.",
+    biography:
+      "ML engineer building recommendation systems, mentoring self-taught developers into AI careers.",
+    experienceYears: 7,
+    certifications: [],
+    careerSpecialties: ["AI Architect"],
+    teachingSpecialties: ["Portfolio review", "System design"],
+    availability: "Evenings",
+    maxApprentices: 2,
+    currentApprentices: 1,
+    employer: "Vantage AI",
+    accomplishments: ["Shipped ML systems used by 10M+ users"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
 ];
 
 export const MOCK_MATCHES: Match[] = [
@@ -128,3 +296,13 @@ export const MOCK_MATCHES: Match[] = [
     requestedAt: "2026-06-20T12:00:00Z",
   },
 ];
+
+export function getMentorsForPathway(pathwayName: string): MentorProfile[] {
+  const target = pathwayName.toLowerCase();
+  return MOCK_MENTORS.filter((mentor) =>
+    mentor.careerSpecialties.some((specialty) => {
+      const s = specialty.toLowerCase();
+      return target.includes(s) || s.includes(target);
+    }),
+  );
+}
