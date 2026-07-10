@@ -50,15 +50,24 @@ function evenRow(left: number, right: number, count: number, top: number, height
 
 const NO_FRAME: RoomSlot = { top: 0, left: 0, width: 0, height: 0 };
 
+// The desk globe in room-ai-architect.png — shared by all three
+// Technology-lobby pathways below so it's a consistent, always-clickable
+// "Begin Interview" landmark no matter which of the three doors got you
+// into this room, each leading to that pathway's own intake.
+const TECH_ROOM_GLOBE: RoomSlot = { top: 45, left: 67.5, width: 7, height: 13 };
+
 export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
   // Cybersecurity, Web Development & Programming, and AI Architect all
   // share the one "Technology Operations" room image — reached via the
-  // /lobbies/technology chooser, not its own door. Each pathway's mirror
-  // sits on a different set piece already in the image (the floor
-  // console, the wall of screens, the desk globe) so three different
-  // careers can share one render without fighting over the same hotspot.
-  // No blank frames exist for mentors/practice-test/application/refer in
-  // this shared context, so those are zeroed out for the two new ones.
+  // /lobbies/technology chooser, not its own door. Each pathway has its
+  // own primary mirror on a different set piece (the floor console, the
+  // wall of screens, the desk globe) so three careers can share one
+  // render without fighting over the same hotspot — but the desk globe
+  // is also wired as an `additionalMirrors` entry on the other two, so
+  // it's a consistent "Begin Interview" landmark no matter which of the
+  // three doors got you into this room. No blank frames exist for
+  // mentors/practice-test/application/refer in this shared context, so
+  // those are zeroed out for the two new ones.
   cybersecurity: {
     image: "/images/room-ai-architect.png",
     mentorFrames: [],
@@ -66,6 +75,7 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     applicationFrame: NO_FRAME,
     referFrame: NO_FRAME,
     mirror: { top: 70, left: 31, width: 37, height: 22 },
+    additionalMirrors: [TECH_ROOM_GLOBE],
   },
   "web-development-programming": {
     image: "/images/room-ai-architect.png",
@@ -74,6 +84,7 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     applicationFrame: NO_FRAME,
     referFrame: NO_FRAME,
     mirror: { top: 16, left: 27, width: 46, height: 33 },
+    additionalMirrors: [TECH_ROOM_GLOBE],
   },
   firefighter: {
     image: "/images/room-firefighter.png",
@@ -132,10 +143,9 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     practiceTestFrame: { top: 72, left: 33, width: 11, height: 18 },
     applicationFrame: { top: 72, left: 45, width: 11, height: 18 },
     referFrame: { top: 72, left: 57, width: 11, height: 18 },
-    // The globe on the desk (measured via crop) — moved here from the
-    // standing side panel per request, since it reads more clearly as a
-    // clickable "world of AI" object.
-    mirror: { top: 45, left: 67.5, width: 7, height: 13 },
+    // The globe on the desk — moved here from the standing side panel
+    // per request, since it reads more clearly as a clickable object.
+    mirror: TECH_ROOM_GLOBE,
   },
   // These are the Accounting and Business Acquisition PATHWAY rooms
   // (final destination, reached via a lobby item — see

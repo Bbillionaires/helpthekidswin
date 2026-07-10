@@ -272,12 +272,16 @@ each frame through `resolveFrameMentorId`/`isFrameClickable` before
 falling back to the default positional mentor — same limitation as the
 rest of `src/data/mock.ts` (in-memory, resets on restart).
 
-The Technology lobby's shared room (`room-ai-architect.png`) now uses the
-desk globe as AI Architect's mirror/interview hotspot (moved off the
-standing side panel, which was harder to notice) — Cybersecurity keeps
-the floor console and Web Development & Programming keeps the wall of
-screens, so all three pathways sharing this one image still map to three
-distinct, non-overlapping set pieces.
+The Technology lobby's shared room (`room-ai-architect.png`) uses the
+desk globe as AI Architect's primary mirror/interview hotspot (moved off
+the standing side panel, which was harder to notice). Cybersecurity and
+Web Development & Programming keep their own primary mirrors too (the
+floor console and the wall of screens, respectively), but the globe is
+also wired onto both of them as an `additionalMirrors` entry
+(`TECH_ROOM_GLOBE` in `pathwayRooms.ts`) — since it's genuinely one
+shared room, not three separate ones, the globe works as a consistent
+"Begin Interview" landmark no matter which of the three doors got you
+in, always leading to whichever pathway you're actually in.
 
 The **Practice Library** (`/library`) is a fourth top-level room concept,
 reachable from the Navbar, rendering real reference art
