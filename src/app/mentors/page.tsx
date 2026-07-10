@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
-import { PictureFrame } from "@/components/PictureFrame";
 import { Emblem } from "@/components/Emblem";
 import { MOCK_MENTORS } from "@/data/mock";
+import { MentorsGalleryClient } from "./MentorsGalleryClient";
 
 export default function MentorsHallPage() {
   return (
@@ -28,20 +28,8 @@ export default function MentorsHallPage() {
         </Link>
       </div>
 
-      <div className="relative z-10 mx-auto mt-10 grid max-w-5xl grid-cols-2 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
-        {MOCK_MENTORS.map((mentor) => (
-          <PictureFrame
-            key={mentor.id}
-            href={`/mentors/${mentor.id}`}
-            label={mentor.displayName}
-            sublabel={mentor.careerSpecialties[0]}
-            initials={mentor.displayName
-              .split(" ")
-              .map((part) => part[0])
-              .join("")
-              .slice(0, 2)}
-          />
-        ))}
+      <div className="relative z-10 mx-auto mt-8 max-w-5xl">
+        <MentorsGalleryClient mentors={MOCK_MENTORS} />
       </div>
 
       <div className="relative z-10 mx-auto mt-14 flex max-w-5xl justify-center">

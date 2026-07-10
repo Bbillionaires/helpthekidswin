@@ -232,19 +232,30 @@ CSS info page (icon, atmosphere copy, intake link) — no unique art
 exists for it yet, and per §2 it currently has no hallway door or lobby
 item either.
 
-`/mentors` is the analogous "gallery" for the Mentorship nav tab —
-currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
-to `/mentors/[id]`. A reference image was supplied for this
-(`mentor-gallery.png`) but is deliberately **not** wired in as a
-pixel-mapped room: it's a fully-rendered mockup with 20 baked-in
-fictional mentors under 5 broad categories (Technology, Finance,
-Healthcare, Entrepreneurship, Real Estate) that don't match either our
-16 real pathways or our real `MOCK_MENTORS` accounts. Overlaying real
-data onto painted fictional names would mean either showing fake people
-as if real or a confusing mismatch — same problem as the original
-hallway art's door labels in §2, and not an acceptable tradeoff on a
-platform serving minors. The Library (§2e) solves the "browse every
-industry's mentors" need it was meant for, built data-driven from real
+`/mentors` (the Mentor Hall nav tab) renders `mentor-gallery.png` as its
+hero, per direct request to put it there — but only its *real* UI chrome
+is wired up as functional, not the image's own painted content.
+`src/lib/mentorCategories.ts` maps the image's "Browse by Industry"
+sidebar (Technology / Finance / Healthcare / Entrepreneurship / Real
+Estate / Entertainment / Leadership) to real `MentorProfile.careerSpecialties`
+values, so clicking a category button live-filters the real mentor grid
+rendered below the image (`src/app/mentors/MentorsGalleryClient.tsx`,
+"use client" for the filter state). A real `<input>` is absolutely
+positioned over the "Find Your Mentor" tablet mockup's search box and
+live-filters by name/specialty/bio as you type.
+
+What's deliberately **not** wired up: the image's right-hand "OUR
+MENTORS" panel — 20 baked-in fictional names/photos/titles under those
+same 5 categories. Those are pixels in the art, not separate elements,
+so there's no way to swap in real mentor data without either
+misrepresenting a real account as one of those specific fictional
+people or creating a confusing mismatch (click "Sophia Lin," land on a
+real mentor's profile with a different name and face) — same problem as
+the original hallway art's door labels in §2, and not an acceptable
+tradeoff on a platform serving minors. That panel is decorative
+atmosphere only; the real, filterable mentor grid directly below it is
+the functional equivalent. The Library (§2e) covers the analogous
+"browse every industry" need for study material, built data-driven from real
 pathways/mentors instead.
 
 ## 2e. Room frame overrides, the Technology globe, and the Practice Library
@@ -291,11 +302,11 @@ is browsable — the page keeps a persistent reminder banner that only the
 applicant's own pathway counts toward their completion certificate, and
 rings whichever shelf represents it in gold.
 
-A second reference image (`mentor-gallery.png`) was also supplied for
-this concept but isn't used here — see the note on it in §2d; its
-fictional-mentor content doesn't fit either the Library (topic shelves,
-not mentor headshots) or the real `/mentors` gallery without being
-regenerated with blank frames first.
+A second reference image (`mentor-gallery.png`) was also supplied around
+the same time but belongs on `/mentors` instead, not here — its content
+is mentor headshots by broad category, not study topics by pathway, so
+it doesn't fit the Library's shelf-of-materials concept. See §2d for how
+it's actually used.
 
 ## 3. Intake → AI recommendation → decision
 
