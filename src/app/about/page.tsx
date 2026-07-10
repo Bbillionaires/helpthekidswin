@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { Navbar } from "@/components/Navbar";
 import { PARENT_ORGANIZATION, FLAGSHIP_INITIATIVE, INITIATIVES } from "@/lib/organization";
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-hallway-void px-6 py-16">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-hallway-void px-6 py-16">
       <div className="mx-auto max-w-2xl">
         <p className="text-xs uppercase tracking-widest text-hallway-gold">
           {PARENT_ORGANIZATION.name}
@@ -37,6 +40,7 @@ export default function AboutPage() {
           Back to the Hall of Opportunity
         </Link>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

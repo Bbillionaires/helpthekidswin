@@ -9,8 +9,12 @@ const ROLE_GATES: Array<{ prefix: string; roles: UserRole[] }> = [
   { prefix: "/workspace", roles: ["APPLICANT", "MENTOR", "GUARDIAN", "ADMIN"] },
 ];
 
+const PUBLIC_EXACT_PATHS = new Set(["/mentor/signup"]);
+
 export default auth((req) => {
   const { pathname } = req.nextUrl;
+  if (PUBLIC_EXACT_PATHS.has(pathname)) return NextResponse.next();
+
   const gate = ROLE_GATES.find((g) => pathname.startsWith(g.prefix));
   if (!gate) return NextResponse.next();
 

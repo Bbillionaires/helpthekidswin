@@ -54,6 +54,8 @@ export type RegisterInput = {
   email: string;
   password: string;
   dateOfBirth?: string;
+  /** Defaults to APPLICANT — the general /register form never exposes this; only the dedicated /mentor/signup flow passes MENTOR. */
+  role?: UserRole;
 };
 
 export function registerUser(input: RegisterInput): DemoUser | { error: string } {
@@ -71,7 +73,7 @@ export function registerUser(input: RegisterInput): DemoUser | { error: string }
     email,
     password,
     name,
-    role: "APPLICANT",
+    role: input.role ?? "APPLICANT",
     dateOfBirth: input.dateOfBirth || undefined,
   };
   REGISTERED_USERS.push(user);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Navbar } from "@/components/Navbar";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { PictureFrame } from "@/components/PictureFrame";
 import { Emblem } from "@/components/Emblem";
@@ -6,7 +7,9 @@ import { MOCK_MENTORS } from "@/data/mock";
 
 export default function MentorsHallPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-hallway-void px-4 py-12">
+    <>
+      <Navbar />
+      <main className="relative min-h-screen overflow-hidden bg-hallway-void px-4 py-12">
       <HallwayBackdrop />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-2 text-center">
@@ -17,6 +20,12 @@ export default function MentorsHallPage() {
         <p className="max-w-xl text-white/60">
           Every mentor who has opened a door for an apprentice hangs on this wall.
         </p>
+        <Link
+          href="/mentor/signup"
+          className="mt-2 rounded-full bg-hallway-gold px-6 py-2 text-sm font-semibold text-hallway-void transition hover:brightness-110"
+        >
+          Become a Mentor
+        </Link>
       </div>
 
       <div className="relative z-10 mx-auto mt-10 grid max-w-5xl grid-cols-2 justify-items-center gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
@@ -43,6 +52,7 @@ export default function MentorsHallPage() {
           Back to the Hall of Opportunity
         </Link>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

@@ -382,6 +382,79 @@ a Prisma-backed user lookup, and email verification. The middleware's
 role-gating logic itself (the `ROLE_GATES` table) is the part that should
 carry forward unchanged once the identity layer is real.
 
+## 7a. Site navigation, mentor self-signup, account recovery, and policy
+
+`src/components/Navbar.tsx` is the single source of truth for site
+navigation: Home, Mentor Hall, About, Resources, Contact, and Policy &
+Disclaimer are always visible; Admin appears only for `ADMIN` sessions.
+The auth cluster on the right is role-aware — a signed-out visitor sees
+Sign Up / Sign In, a signed-in user sees their name, role, a link to the
+role-appropriate profile page (`/apply/profile`, `/mentor/profile`, or
+`/admin`), and Sign Out.
+
+**Mentor self-signup** (`/mentor/signup`) mirrors the applicant
+`/register` flow but calls `registerUser({ ..., role: "MENTOR" })` and
+then `createMentorProfile(...)` (both in `src/lib/auth/users.ts` /
+`src/data/mock.ts`) instead of `createApplicantProfile`. It collects
+career specialties as checkboxes sourced directly from `PATHWAYS`
+(`src/lib/pathways.ts`) so the list can't drift out of sync with the
+pathway registry. New mentors start with
+`verification.backgroundReviewStatus: "pending"` — matching the
+minor-protection gate in §5, they cannot message an applicant under 18
+until an admin clears that review.
+
+`/mentor/signup` has to be a **public** route even though every other
+`/mentor/*` path is role-gated — `src/middleware.ts` special-cases it via
+a `PUBLIC_EXACT_PATHS` set checked before the `ROLE_GATES` table, since a
+brand-new mentor has no session yet when they land on the signup page.
+
+**Applicant and mentor profile pages** (`/apply/profile`,
+`/mentor/profile`) were previously non-functional UI stubs (`FormSection`
+inputs with no `name`/`defaultValue`, buttons that did nothing). Both are
+now real server components: they read the signed-in user's
+`ApplicantProfile` / `MentorProfile` via `getApplicantByUserId` /
+`getMentorByUserId`, prefill every field with `defaultValue`, and a
+`"use server"` action persists edits via the new `updateApplicantProfile`
+/ `updateMentorProfile` functions in `src/data/mock.ts`. The mentor page
+also has a "Submit for Verification" action
+(`submitMentorForVerification`) that's disabled once a review is already
+underway. The old client-side "Resume upload" file input was removed
+rather than wired to a fake handler — there's no file storage yet, and a
+non-functional upload button would be worse than no button.
+
+**Forgot password/username** (`/forgot-password`) is intentionally an
+honest stub, not a fake "reset link sent" flow: there's no email-sending
+service wired up (see §8), so pretending to send a reset email would be
+lying to the user. The page collects the account email and tells the
+visitor a real person will follow up, pointing them at `/contact` in the
+meantime. This should become a real token-based reset flow once an email
+provider is configured.
+
+**Policy & Disclaimer** (`/policy`) directly answers two questions this
+project needed honest answers to rather than assumed ones:
+
+- *Does HIPAA apply?* No — this platform isn't a healthcare provider,
+  health plan, or clearinghouse (the definition of a HIPAA "covered
+  entity"), even though one pathway is healthcare careers. The page still
+  flags the FTC Health Breach Notification Rule and state
+  sensitive-data laws as the more relevant obligations for the
+  health/fitness-adjacent intake questions this platform does ask.
+- *Does COPPA apply, and is Vanta the right free tool?* COPPA covers
+  under-13s specifically, so it doesn't reach a 16-18 platform — but
+  state-level minor-protection and youth-program background-check
+  statutes do, which is why guardian consent and mentor background
+  review are hard gates (§5) rather than a COPPA checkbox. And Vanta is
+  **not free** — it's a paid SOC 2/HIPAA compliance-automation
+  subscription that wouldn't address this project's actual current risk
+  (plaintext passwords in an in-memory store, §7). The page recommends
+  free alternatives (OWASP ASVS, NIST Privacy Framework, CISA's Cyber
+  Essentials) for now and revisiting paid tooling once/if a school
+  district or funder requires formal compliance proof.
+
+The page is explicit that it is not legal advice and hasn't been reviewed
+by an attorney — that review is still a prerequisite before this
+platform handles real minors' data in production.
+
 ## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
 
 - **Identity**: see §7 — the demo/in-memory credential store is the main
@@ -411,6 +484,14 @@ carry forward unchanged once the identity layer is real.
   scores client-side and shows nothing to a mentor or admin;
   `/pathways/[slug]/refer` shows a confirmation but sends nothing. Both
   need a real submission target once one exists.
+- **No email-sending service**: `/contact` and `/forgot-password` both
+  collect input and show an honest "a real person will follow up"
+  message rather than a fake "email sent" confirmation (see §7a) — there
+  is no SMTP/Resend/SES integration yet. Wiring one up unblocks both a
+  real password-reset-by-email flow and actual contact-form delivery.
+- **No file storage**: the applicant profile's resume upload was removed
+  rather than left as a non-functional stub (see §7a) — add S3/Vercel
+  Blob (or similar) before reintroducing it.
 - **Intake intended to become a Google Form → Sheet → LLM pipeline**: the
   requested design is: the mirror leads to a Google Form, responses land
   in a Google Sheet, and a server-side job calls an LLM against that

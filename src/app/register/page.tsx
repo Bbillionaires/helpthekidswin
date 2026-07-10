@@ -2,6 +2,7 @@ import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/auth";
+import { Navbar } from "@/components/Navbar";
 import { registerUser } from "@/lib/auth/users";
 import { createApplicantProfile } from "@/data/mock";
 import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
@@ -40,7 +41,9 @@ export default function RegisterPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-hallway-void px-6">
+    <>
+      <Navbar />
+      <main className="flex min-h-[calc(100vh-73px)] items-center justify-center bg-hallway-void px-6 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 p-8">
         <p className="mb-1 text-xs uppercase tracking-widest text-hallway-gold">
           {FLAGSHIP_INITIATIVE.name}
@@ -118,6 +121,7 @@ export default function RegisterPage({
           </Link>
         </p>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

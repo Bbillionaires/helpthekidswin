@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Navbar } from "@/components/Navbar";
 import { MOCK_MENTORS } from "@/data/mock";
 import { getPathway } from "@/lib/pathways";
 
@@ -12,7 +13,9 @@ export default function MentorDetailPage({ params }: { params: { id: string } })
   if (!mentor) notFound();
 
   return (
-    <main className="min-h-screen bg-hallway-void px-6 py-16">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-hallway-void px-6 py-16">
       <div className="mx-auto max-w-2xl">
         <div className="mx-auto mb-6 flex h-28 w-24 items-center justify-center rounded-sm border-[6px] border-hallway-gold/70 bg-gradient-to-b from-[#241a30] to-[#120b18]">
           <span className="font-display text-2xl font-bold text-hallway-gold/80">
@@ -84,6 +87,7 @@ export default function MentorDetailPage({ params }: { params: { id: string } })
           Back to the Mentor Gallery
         </Link>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

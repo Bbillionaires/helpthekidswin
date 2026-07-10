@@ -22,16 +22,22 @@ export function TextField({
   label,
   placeholder,
   type = "text",
+  name,
+  defaultValue,
 }: {
   label: string;
   placeholder?: string;
   type?: string;
+  name?: string;
+  defaultValue?: string | number;
 }) {
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-white/80">{label}</span>
       <input
         type={type}
+        name={name}
+        defaultValue={defaultValue}
         placeholder={placeholder}
         className="w-full rounded-lg border border-white/15 bg-hallway-void/60 px-3 py-2 text-white placeholder:text-white/30 focus:border-hallway-gold focus:outline-none"
       />
@@ -42,14 +48,20 @@ export function TextField({
 export function TextAreaField({
   label,
   placeholder,
+  name,
+  defaultValue,
 }: {
   label: string;
   placeholder?: string;
+  name?: string;
+  defaultValue?: string;
 }) {
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-white/80">{label}</span>
       <textarea
+        name={name}
+        defaultValue={defaultValue}
         placeholder={placeholder}
         rows={3}
         className="w-full rounded-lg border border-white/15 bg-hallway-void/60 px-3 py-2 text-white placeholder:text-white/30 focus:border-hallway-gold focus:outline-none"

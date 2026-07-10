@@ -358,6 +358,16 @@ export function getApplicantByUserId(userId: string): ApplicantProfile | undefin
   return MOCK_APPLICANTS.find((applicant) => applicant.userId === userId);
 }
 
+export function updateApplicantProfile(
+  userId: string,
+  patch: Partial<Omit<ApplicantProfile, "id" | "userId" | "assessments">>,
+): ApplicantProfile | undefined {
+  const applicant = getApplicantByUserId(userId);
+  if (!applicant) return undefined;
+  Object.assign(applicant, patch);
+  return applicant;
+}
+
 /** Stores the intake score and raw answers on the applicant's own profile. */
 export function recordIntakeAssessment(
   userId: string,
@@ -420,4 +430,66 @@ export function issueCertificate(match: Match, applicant?: ApplicantProfile, men
 
 export function getCertificatesForMatch(matchId: string): Certificate[] {
   return MOCK_CERTIFICATES.filter((c) => c.matchId === matchId);
+}
+
+/**
+ * Mutates MOCK_MENTORS in place, same in-memory-only caveat as
+ * createApplicantProfile above. A self-signed-up mentor starts
+ * unverified — identityVerified/credentialsVerified/backgroundReview
+ * all start false/pending, same as the minor-protection gate requires
+ * for any mentor before they can message an applicant.
+ */
+export function createMentorProfile(input: {
+  userId: string;
+  displayName: string;
+  biography: string;
+  careerSpecialties: string[];
+  experienceYears: number;
+  employer?: string;
+}): MentorProfile {
+  const mentor: MentorProfile = {
+    id: `mentor_${input.userId}`,
+    userId: input.userId,
+    displayName: input.displayName,
+    biography: input.biography,
+    experienceYears: input.experienceYears,
+    certifications: [],
+    careerSpecialties: input.careerSpecialties,
+    teachingSpecialties: [],
+    availability: "",
+    maxApprentices: 1,
+    currentApprentices: 0,
+    employer: input.employer,
+    accomplishments: [],
+    verification: {
+      identityVerified: false,
+      backgroundReviewStatus: "pending",
+      credentialsVerified: false,
+    },
+  };
+  MOCK_MENTORS.push(mentor);
+  return mentor;
+}
+
+export function getMentorByUserId(userId: string): MentorProfile | undefined {
+  return MOCK_MENTORS.find((mentor) => mentor.userId === userId);
+}
+
+export function updateMentorProfile(
+  userId: string,
+  patch: Partial<Omit<MentorProfile, "id" | "userId" | "verification">>,
+): MentorProfile | undefined {
+  const mentor = getMentorByUserId(userId);
+  if (!mentor) return undefined;
+  Object.assign(mentor, patch);
+  return mentor;
+}
+
+export function submitMentorForVerification(userId: string): MentorProfile | undefined {
+  const mentor = getMentorByUserId(userId);
+  if (!mentor) return undefined;
+  if (mentor.verification.backgroundReviewStatus === "not-started") {
+    mentor.verification.backgroundReviewStatus = "pending";
+  }
+  return mentor;
 }

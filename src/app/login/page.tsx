@@ -1,6 +1,8 @@
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { signIn } from "@/auth";
+import { Navbar } from "@/components/Navbar";
 import { DEMO_USERS } from "@/lib/auth/users";
 import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
@@ -29,7 +31,9 @@ export default function LoginPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-hallway-void px-6">
+    <>
+      <Navbar />
+      <main className="flex min-h-[calc(100vh-73px)] items-center justify-center bg-hallway-void px-6 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/5 p-8">
         <p className="mb-1 text-xs uppercase tracking-widest text-hallway-gold">
           {FLAGSHIP_INITIATIVE.name}
@@ -70,6 +74,12 @@ export default function LoginPage({
           </button>
         </form>
 
+        <p className="mt-4 text-center text-xs text-white/50">
+          <Link href="/forgot-password" className="text-hallway-gold hover:underline">
+            Forgot your password or email?
+          </Link>
+        </p>
+
         <div className="mt-6 rounded-lg border border-white/10 bg-black/20 p-3 text-xs text-white/50">
           <p className="mb-1 font-semibold text-white/70">Demo accounts (no real backend yet):</p>
           {DEMO_USERS.map((user) => (
@@ -79,6 +89,7 @@ export default function LoginPage({
           ))}
         </div>
       </div>
-    </main>
+      </main>
+    </>
   );
 }
