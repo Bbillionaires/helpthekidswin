@@ -3,8 +3,9 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPathway, PATHWAYS } from "@/lib/pathways";
-import { getMentorsForPathway, getApplicantByUserId } from "@/data/mock";
+import { getMentorsForPathway, getApplicantByUserId, getMentorById } from "@/data/mock";
 import { getRoomArt } from "@/lib/pathwayRooms";
+import { isFrameClickable, resolveFrameMentorId } from "@/lib/roomFrameSettings";
 
 export function generateStaticParams() {
   return PATHWAYS.map((pathway) => ({ slug: pathway.slug }));
@@ -67,18 +68,43 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
           priority
         />
 
-        {/* Mentor frames — filled left to right with mentors matched to this pathway */}
+        {/* Mentor frames — filled left to right with mentors matched to this
+            pathway by default; admin can reassign or disable any frame from
+            /admin/rooms (src/lib/roomFrameSettings.ts). Every frame is
+            clickable — one with no mentor assigned links to the Mentor Hall
+            instead of rendering a dead div. */}
         {room.mentorFrames.map((frame, i) => {
-          const mentor = mentors[i];
           const style = {
             top: `${frame.top}%`,
             left: `${frame.left}%`,
             width: `${frame.width}%`,
             height: `${frame.height}%`,
           };
-          if (!mentor) {
+
+          if (!isFrameClickable(pathway.slug, i)) {
             return <div key={i} className="absolute" style={style} />;
           }
+
+          const resolvedMentorId = resolveFrameMentorId(pathway.slug, i, mentors[i]?.id);
+          const mentor = resolvedMentorId ? getMentorById(resolvedMentorId) : undefined;
+
+          if (!mentor) {
+            return (
+              <Link
+                key={i}
+                href="/mentors"
+                title="Meet Our Mentors"
+                className="group absolute flex flex-col items-center justify-center gap-1 rounded-sm transition"
+                style={style}
+              >
+                <span className="absolute inset-0 rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+                <span className="relative px-1 text-center text-[10px] font-semibold uppercase tracking-wide text-white/60 opacity-0 drop-shadow-[0_0_4px_rgba(0,0,0,0.9)] transition group-hover:opacity-100 sm:text-xs">
+                  Meet Our Mentors
+                </span>
+              </Link>
+            );
+          }
+
           const initials = mentor.displayName
             .split(" ")
             .map((part) => part[0])

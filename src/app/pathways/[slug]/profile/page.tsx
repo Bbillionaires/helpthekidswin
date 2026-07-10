@@ -26,7 +26,7 @@ export default function CreateProfilePage({ params }: { params: { slug: string }
     await fetch("/api/profile/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ goals, city, state, availability, transportation }),
+      body: JSON.stringify({ goals, city, state, availability, transportation, pathwaySlug: params.slug }),
     });
     router.push(`/pathways/${params.slug}`);
   }

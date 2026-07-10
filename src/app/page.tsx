@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { HallwayBackdrop } from "@/components/HallwayBackdrop";
 import { Emblem } from "@/components/Emblem";
@@ -16,16 +17,25 @@ import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
 export default function HomePage() {
-  const [welcomed, setWelcomed] = useState(false);
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-hallway-void" />}>
+      <HomeContent />
+    </Suspense>
+  );
+}
 
+function HomeContent() {
   // "Back to the Hallway" links (from a pathway room, etc.) point at
   // /?entered=1 so returning here re-enters the interior hallway instead
-  // of resetting to the exterior welcome screen.
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("entered") === "1") {
-      setWelcomed(true);
-    }
-  }, []);
+  // of resetting to the exterior welcome screen. useSearchParams reflects
+  // the destination URL synchronously as part of the client-side
+  // navigation itself, so the interior renders on the very first paint —
+  // no useEffect+setState round trip, which used to show a visible flash
+  // of the exterior "guide" screen before flipping over.
+  const searchParams = useSearchParams();
+  const [enteredManually, setEnteredManually] = useState(false);
+  const welcomed = enteredManually || searchParams.get("entered") === "1";
+  const setWelcomed = (value: boolean) => setEnteredManually(value);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-hallway-void px-3 py-6">

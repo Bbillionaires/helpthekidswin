@@ -5,6 +5,7 @@ import { FLAGSHIP_INITIATIVE, PARENT_ORGANIZATION } from "@/lib/organization";
 const PRIMARY_LINKS = [
   { href: "/", label: "Home" },
   { href: "/mentors", label: "Mentor Hall" },
+  { href: "/library", label: "Library" },
   { href: "/about", label: "About" },
   { href: "/resources", label: "Resources" },
   { href: "/contact", label: "Contact" },

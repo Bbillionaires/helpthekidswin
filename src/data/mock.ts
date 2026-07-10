@@ -11,6 +11,7 @@ export const MOCK_APPLICANTS: ApplicantProfile[] = [
     userId: "user_1",
     displayName: "Jordan M.",
     isMinor: true,
+    primaryPathwaySlug: "construction-skilled-trades",
     careerProfile: {
       goals: "Become a certified electrician within 3 years.",
       interests: ["Building things", "Leadership / service"],
@@ -32,6 +33,7 @@ export const MOCK_APPLICANTS: ApplicantProfile[] = [
     userId: "user_2",
     displayName: "Priya S.",
     isMinor: false,
+    primaryPathwaySlug: "cybersecurity",
     careerProfile: {
       goals: "Transition from retail into cybersecurity within a year.",
       interests: ["Technology"],
@@ -261,6 +263,132 @@ export const MOCK_MENTORS: MentorProfile[] = [
       credentialsVerified: true,
     },
   },
+  {
+    id: "mentor_11",
+    userId: "user_20",
+    displayName: "Vivian C., Esq.",
+    biography:
+      "Litigation attorney mentoring students through the LSAT, law school applications, and early bar prep.",
+    experienceYears: 12,
+    certifications: ["State Bar License"],
+    careerSpecialties: ["Attorney"],
+    teachingSpecialties: ["LSAT prep", "Law school application review"],
+    availability: "Weekday evenings",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Carrow & Bennett LLP",
+    accomplishments: ["Pro bono counsel on 50+ cases"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_12",
+    userId: "user_21",
+    displayName: "Nathaniel B., CPA",
+    biography:
+      "CPA at a mid-size firm, mentoring students through accounting fundamentals and the CPA exam pathway.",
+    experienceYears: 10,
+    certifications: ["CPA"],
+    careerSpecialties: ["Accounting"],
+    teachingSpecialties: ["CPA exam prep", "Bookkeeping fundamentals"],
+    availability: "Weekends",
+    maxApprentices: 3,
+    currentApprentices: 0,
+    employer: "Marsh & Coyle CPAs",
+    accomplishments: ["Managed audits for 30+ small businesses"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_13",
+    userId: "user_22",
+    displayName: "Regina F.",
+    biography:
+      "Acquired and turned around three small businesses, now mentoring first-time buyers through due diligence and deal structuring.",
+    experienceYears: 15,
+    certifications: [],
+    careerSpecialties: ["Business Acquisition"],
+    teachingSpecialties: ["Due diligence", "Deal structuring"],
+    availability: "Flexible",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Fairfield Holdings",
+    accomplishments: ["Closed 3 acquisitions totaling $12M in revenue"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_14",
+    userId: "user_23",
+    displayName: "Oscar M.",
+    biography:
+      "Licensed trader mentoring beginners on reading markets, risk management, and building a disciplined trading plan.",
+    experienceYears: 11,
+    certifications: ["Series 65"],
+    careerSpecialties: ["Stock Trading"],
+    teachingSpecialties: ["Technical analysis", "Risk management"],
+    availability: "Weekday mornings",
+    maxApprentices: 2,
+    currentApprentices: 0,
+    employer: "Ridgeline Capital",
+    accomplishments: ["12 consecutive years of positive annual returns"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_15",
+    userId: "user_24",
+    displayName: "Bianca S.",
+    biography:
+      "Creative director mentoring aspiring advertisers on pitch decks, brand strategy, and building a portfolio.",
+    experienceYears: 9,
+    certifications: [],
+    careerSpecialties: ["Advertiser"],
+    teachingSpecialties: ["Portfolio review", "Pitch deck workshops"],
+    availability: "Weekday afternoons",
+    maxApprentices: 3,
+    currentApprentices: 0,
+    employer: "Brightmark Agency",
+    accomplishments: ["Led campaigns for 3 national brands"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
+  {
+    id: "mentor_16",
+    userId: "user_25",
+    displayName: "Devon L.",
+    biography:
+      "Full-stack developer mentoring self-taught coders into their first web development role.",
+    experienceYears: 8,
+    certifications: [],
+    careerSpecialties: ["Web Development & Programming"],
+    teachingSpecialties: ["Code review", "Technical interview prep"],
+    availability: "Evenings",
+    maxApprentices: 3,
+    currentApprentices: 1,
+    employer: "Fielding Software",
+    accomplishments: ["Mentored 15+ developers into their first tech job"],
+    verification: {
+      identityVerified: true,
+      backgroundReviewStatus: "cleared",
+      credentialsVerified: true,
+    },
+  },
 ];
 
 export const MOCK_MATCHES: Match[] = [
@@ -473,6 +601,10 @@ export function createMentorProfile(input: {
 
 export function getMentorByUserId(userId: string): MentorProfile | undefined {
   return MOCK_MENTORS.find((mentor) => mentor.userId === userId);
+}
+
+export function getMentorById(mentorId: string): MentorProfile | undefined {
+  return MOCK_MENTORS.find((mentor) => mentor.id === mentorId);
 }
 
 export function updateMentorProfile(

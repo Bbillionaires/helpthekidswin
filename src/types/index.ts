@@ -12,6 +12,8 @@ export interface ApplicantProfile {
   displayName: string;
   dateOfBirth?: string;
   isMinor: boolean;
+  /** The pathway whose room door the applicant first walked through and completed the mini-profile at — their "own" industry for completion-tracking purposes (see the Library, ARCHITECTURE.md §7b). Set once and never overwritten by later room visits. */
+  primaryPathwaySlug?: string;
   careerProfile: {
     goals: string;
     interests: string[];

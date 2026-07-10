@@ -6,6 +6,7 @@ import { MOCK_APPLICANTS, MOCK_MENTORS, MOCK_MATCHES } from "@/data/mock";
 const ADMIN_SECTIONS = [
   { href: "/admin/applicants", label: "Applicants", description: "Review applicants and AI recommendations" },
   { href: "/admin/mentors", label: "Mentors", description: "Approve mentors and recruiters" },
+  { href: "/admin/rooms", label: "Rooms", description: "Assign mentors to room frames, toggle clickability" },
   { href: "/admin/communications", label: "Communications", description: "Audit messages and reports" },
 ];
 

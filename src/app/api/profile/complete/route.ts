@@ -24,6 +24,12 @@ export async function POST(request: Request) {
   if (VALID_TRANSPORTATION.includes(body.transportation)) {
     applicant.transportation = body.transportation;
   }
+  // First room door an applicant completes this mini-profile at becomes
+  // their "own" pathway for Library focus-tracking — never overwritten by
+  // later room visits.
+  if (!applicant.primaryPathwaySlug && typeof body.pathwaySlug === "string") {
+    applicant.primaryPathwaySlug = body.pathwaySlug;
+  }
 
   return NextResponse.json({ ok: true });
 }

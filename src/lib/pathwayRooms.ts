@@ -55,12 +55,10 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
   // share the one "Technology Operations" room image — reached via the
   // /lobbies/technology chooser, not its own door. Each pathway's mirror
   // sits on a different set piece already in the image (the floor
-  // console, the wall of screens, the standing panel) so three different
+  // console, the wall of screens, the desk globe) so three different
   // careers can share one render without fighting over the same hotspot.
   // No blank frames exist for mentors/practice-test/application/refer in
-  // this shared context, so those are zeroed out for the two new ones —
-  // ai-architect below is unchanged and keeps its original layout since
-  // its mirror (the standing panel) never overlapped them.
+  // this shared context, so those are zeroed out for the two new ones.
   cybersecurity: {
     image: "/images/room-ai-architect.png",
     mentorFrames: [],
@@ -134,7 +132,10 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     practiceTestFrame: { top: 72, left: 33, width: 11, height: 18 },
     applicationFrame: { top: 72, left: 45, width: 11, height: 18 },
     referFrame: { top: 72, left: 57, width: 11, height: 18 },
-    mirror: { top: 28, left: 78, width: 14, height: 55 },
+    // The globe on the desk (measured via crop) — moved here from the
+    // standing side panel per request, since it reads more clearly as a
+    // clickable "world of AI" object.
+    mirror: { top: 45, left: 67.5, width: 7, height: 13 },
   },
   // These are the Accounting and Business Acquisition PATHWAY rooms
   // (final destination, reached via a lobby item — see
@@ -172,9 +173,15 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
   attorney: {
     image: "/images/room-attorney.png",
     mentorFrames: [...evenRow(71.5, 97, 3, 11, 12), ...evenRow(71.5, 97, 3, 23.5, 12)],
-    practiceTestFrame: NO_FRAME,
-    applicationFrame: NO_FRAME,
-    referFrame: NO_FRAME,
+    // The three book-related set pieces in the room, each doing double
+    // duty as a labeled action: the "CIVIL PROCEDURE / CONSTITUTIONAL LAW
+    // / ..." named stack (right side) reads as exam prep → Practice Test;
+    // the flat stack with the gavel (desk, bottom-left) reads as taking
+    // action → Application; the standalone shelf row (left-middle, under
+    // "Practice Areas") → Refer a Recruit.
+    practiceTestFrame: { top: 52, left: 79, width: 14, height: 18 },
+    applicationFrame: { top: 51, left: 11, width: 16, height: 11 },
+    referFrame: { top: 40, left: 12, width: 16, height: 9 },
     mirror: { top: 19, left: 31, width: 34, height: 35 },
   },
   // Two symmetric mirrors flank the central NYSE display — either is a
@@ -186,8 +193,8 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     practiceTestFrame: NO_FRAME,
     applicationFrame: NO_FRAME,
     referFrame: NO_FRAME,
-    mirror: { top: 12, left: 24, width: 8, height: 35 },
-    additionalMirrors: [{ top: 12, left: 68, width: 8, height: 35 }],
+    mirror: { top: 11.5, left: 25.3, width: 7.3, height: 37 },
+    additionalMirrors: [{ top: 11.5, left: 68, width: 7.3, height: 37 }],
   },
 };
 

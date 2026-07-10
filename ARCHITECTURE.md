@@ -115,15 +115,21 @@ entering the hallway; the rest route to real pages (`/about`,
 `/mentors`, `/resources`, `/contact`).
 
 `src/app/page.tsx` is a client component holding the exterior/interior
-toggle (`welcomed` state). Registration isn't gated here at all — see
-§2b, the gate is one step later, at room/lobby entry — so this page
-needs no server-side auth check. `welcomed` is local component state,
-which resets on a full navigation — so every "Back to the Hallway" /
-"Explore Another Door" / "Back to the Hall of Opportunity" link across
-the app points at `/?entered=1` rather than plain `/`; the homepage
-reads that query param on mount and jumps straight to the interior
-instead of replaying the exterior welcome screen. Plain `/` (e.g. the
-navbar logo) intentionally still resets to the exterior.
+toggle. Registration isn't gated here at all — see §2b, the gate is one
+step later, at room/lobby entry — so this page needs no server-side auth
+check. Every "Back to the Hallway" / "Explore Another Door" / "Back to
+the Hall of Opportunity" link across the app points at `/?entered=1`
+rather than plain `/`, and the homepage reads that via `useSearchParams()`
+(wrapped in a `<Suspense>` boundary, per Next's requirement for that
+hook) rather than `useState` + a `useEffect` reading `window.location`.
+That distinction matters: `useSearchParams()` reflects the destination
+URL synchronously as part of the client-side navigation itself, so the
+interior hallway renders on the very first paint. The old effect-based
+version set `welcomed` a render *after* mount, which was visible — every
+"Back to the Hallway" click flashed the exterior welcome screen for a
+frame before flipping to the interior. Plain `/` (e.g. the navbar logo)
+intentionally still resets to the exterior, via separate local state for
+the in-page "Enter" button/hotspots.
 
 ### 2b. Registration gate
 
@@ -208,32 +214,88 @@ aspect ratio. `business-acquisition`'s render also bakes in its own
 
 `attorney` and `stock-trading` *do* follow the blank-frame pattern —
 `attorney` has 6 blank mentor frames ("Mentors Who Built The Path") and
-one large circular mirror; `stock-trading` has 6 blank mentor frames
-split into two walls of 3 ("Mentors Who Mastered The Markets" /
-"Mentors Who Built The Path") and, unusually, *two* mirrors flanking the
-central NYSE display — both are equally valid, so `PathwayRoomArt` grew
-an optional `additionalMirrors: RoomSlot[]` and the page renders every
-one of them with the same "Begin Interview" behavior. Neither has blank
-practice-test/application/refer frames, so those stay zeroed out the
-same way as the other non-standard rooms.
+one large circular mirror, plus three real book-stack set pieces doing
+double duty as the practice-test/application/refer hotspots (the
+"CIVIL PROCEDURE / CONSTITUTIONAL LAW / ..." named stack → Practice
+Test, the flat stack with the gavel → Application, the standalone shelf
+row → Refer a Recruit — no blank frames exist for these in the source
+art, so real set pieces were measured and used instead, the same idea as
+the Technology lobby's clickable items in §2a). `stock-trading` has 6
+blank mentor frames split into two walls of 3 ("Mentors Who Mastered The
+Markets" / "Mentors Who Built The Path") and, unusually, *two* mirrors
+flanking the central NYSE display — both are equally valid, so
+`PathwayRoomArt` grew an optional `additionalMirrors: RoomSlot[]` and the
+page renders every one of them with the same "Begin Interview" behavior.
 
 `advertiser` has no `pathwayRooms.ts` entry and falls back to a plain
 CSS info page (icon, atmosphere copy, intake link) — no unique art
 exists for it yet, and per §2 it currently has no hallway door or lobby
-item either. `accounting`, `attorney`, `business-acquisition`, and
-`stock-trading` have no `MOCK_MENTORS` entries yet, so their mentor
-frames (where they have any) render as empty slots until mentors tagged
-with those specialties are added.
+item either.
 
 `/mentors` is the analogous "gallery" for the Mentorship nav tab —
 currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
 to `/mentors/[id]`. A reference image was supplied for this
-(`mentor-gallery.png`) but isn't wired in: it's a fully-rendered mockup
-with 20 baked-in fictional mentors (different names, different industry
-categories) rather than blank frames, so — same problem as the original
-hallway art's door labels — there's no clean way to overlay our actual
-mentor data into it. It'd need to be regenerated with blank frames, like
-the pathway rooms, before it can replace the CSS version.
+(`mentor-gallery.png`) but is deliberately **not** wired in as a
+pixel-mapped room: it's a fully-rendered mockup with 20 baked-in
+fictional mentors under 5 broad categories (Technology, Finance,
+Healthcare, Entrepreneurship, Real Estate) that don't match either our
+16 real pathways or our real `MOCK_MENTORS` accounts. Overlaying real
+data onto painted fictional names would mean either showing fake people
+as if real or a confusing mismatch — same problem as the original
+hallway art's door labels in §2, and not an acceptable tradeoff on a
+platform serving minors. The Library (§2e) solves the "browse every
+industry's mentors" need it was meant for, built data-driven from real
+pathways/mentors instead.
+
+## 2e. Room frame overrides, the Technology globe, and the Practice Library
+
+Every mentor picture frame in a pathway room is clickable, always — a
+frame with no mentor matched by career specialty used to render a dead
+`<div>`; it now falls back to a "Meet Our Mentors" link to `/mentors`
+instead. `src/lib/roomFrameSettings.ts` is the in-memory override layer
+that makes both halves of this configurable from `/admin/rooms`: an
+admin can pin a *specific* mentor into a specific frame index (overriding
+the automatic positional match), explicitly clear a frame back to blank,
+or toggle a frame's clickability off entirely. `PathwayRoomPage` resolves
+each frame through `resolveFrameMentorId`/`isFrameClickable` before
+falling back to the default positional mentor — same limitation as the
+rest of `src/data/mock.ts` (in-memory, resets on restart).
+
+The Technology lobby's shared room (`room-ai-architect.png`) now uses the
+desk globe as AI Architect's mirror/interview hotspot (moved off the
+standing side panel, which was harder to notice) — Cybersecurity keeps
+the floor console and Web Development & Programming keeps the wall of
+screens, so all three pathways sharing this one image still map to three
+distinct, non-overlapping set pieces.
+
+The **Practice Library** (`/library`) is a fourth top-level room concept,
+reachable from the Navbar, rendering real reference art
+(`public/images/hall of opportunity library.png`) — a room of 10 labeled
+bookshelves, each listing real study topics. `src/lib/libraryShelves.ts`
+maps each shelf to the pathway(s) it represents (a shelf covering more
+than one pathway, like "Technology" or "Business Acquisition & Stocks",
+routes to that grouping's lobby, same convention as the hallway doors in
+§2). The painted image only covers 10 of the 16 pathways — Attorney,
+Accounting, and Advertiser aren't on any shelf, so those three render as
+a plain card row below the image instead of an invented hotspot.
+
+It's gated the same way pathway rooms are — registration required — plus
+one more rule specific to the Library: an applicant can't browse it at
+all until they've walked through a door and completed the mini-profile
+at their first room (§2c), because there'd be no "own industry" to focus
+on otherwise. That "own industry" is tracked as
+`ApplicantProfile.primaryPathwaySlug`, set once by `/api/profile/complete`
+from whichever pathway's mini-profile the applicant completed first, and
+never overwritten by later room visits. Once past that gate, every shelf
+is browsable — the page keeps a persistent reminder banner that only the
+applicant's own pathway counts toward their completion certificate, and
+rings whichever shelf represents it in gold.
+
+A second reference image (`mentor-gallery.png`) was also supplied for
+this concept but isn't used here — see the note on it in §2d; its
+fictional-mentor content doesn't fit either the Library (topic shelves,
+not mentor headshots) or the real `/mentors` gallery without being
+regenerated with blank frames first.
 
 ## 3. Intake → AI recommendation → decision
 
