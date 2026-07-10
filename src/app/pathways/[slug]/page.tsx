@@ -162,6 +162,27 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
           </span>
         </Link>
 
+        {/* A few rooms have more than one literal mirror (e.g. flanking a central display) — every one leads to the same interview */}
+        {room.additionalMirrors?.map((slot, i) => (
+          <Link
+            key={i}
+            href={`/pathways/${pathway.slug}/intake`}
+            title="Begin Your Interview"
+            className="group absolute flex items-center justify-center rounded-sm transition"
+            style={{
+              top: `${slot.top}%`,
+              left: `${slot.left}%`,
+              width: `${slot.width}%`,
+              height: `${slot.height}%`,
+            }}
+          >
+            <span className="absolute inset-0 rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+            <span className="relative font-display text-sm font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
+              Begin Interview
+            </span>
+          </Link>
+        ))}
+
         {/* Some art bakes in its own "return to hall" graphic — overlay a real link on it */}
         {room.returnToHallway && (
           <Link

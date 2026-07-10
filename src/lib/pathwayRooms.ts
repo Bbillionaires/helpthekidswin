@@ -30,6 +30,8 @@ export interface PathwayRoomArt {
   applicationFrame: RoomSlot;
   referFrame: RoomSlot;
   mirror: RoomSlot;
+  /** A handful of rooms render more than one literal mirror (e.g. flanking a central display) — each is an equally valid "begin interview" click. */
+  additionalMirrors?: RoomSlot[];
   /** Some art bakes in its own "return to hall" graphic — overlay a real link on it when present. */
   returnToHallway?: RoomSlot;
 }
@@ -162,6 +164,30 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     referFrame: NO_FRAME,
     mirror: { top: 23, left: 40, width: 22, height: 25 },
     returnToHallway: { top: 65, left: 43, width: 13, height: 4 },
+  },
+  // Attorney (reached via its own door, no lobby) and Stock Trading
+  // (reached via the Business Acquisition & Stock Trading lobby) both
+  // follow the standard blank-frame pattern for mentors, unlike the two
+  // above — measured the same way as the original 10 rooms.
+  attorney: {
+    image: "/images/room-attorney.png",
+    mentorFrames: [...evenRow(71.5, 97, 3, 11, 12), ...evenRow(71.5, 97, 3, 23.5, 12)],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 19, left: 31, width: 34, height: 35 },
+  },
+  // Two symmetric mirrors flank the central NYSE display — either is a
+  // valid "begin interview" click, so both are wired (see
+  // `additionalMirrors`).
+  "stock-trading": {
+    image: "/images/room-stock-trading.png",
+    mentorFrames: [...evenRow(1, 24, 3, 26, 24), ...evenRow(77, 99, 3, 26, 24)],
+    practiceTestFrame: NO_FRAME,
+    applicationFrame: NO_FRAME,
+    referFrame: NO_FRAME,
+    mirror: { top: 12, left: 24, width: 8, height: 35 },
+    additionalMirrors: [{ top: 12, left: 68, width: 8, height: 35 }],
   },
 };
 

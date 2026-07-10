@@ -196,12 +196,34 @@ entries skip mentor/practice-test/application/refer entirely (zeroed-out
 at all still has a mirror, that's just the one interactive element for
 these two.
 
-Any pathway without a `pathwayRooms.ts` entry falls back to a plain
-CSS info page (icon, atmosphere copy, intake link) — this covers
-`attorney`, `accounting`, `advertiser`, `business-acquisition`, and
-`stock-trading`, the five new professional/business pathways that have
-no unique room art yet. They also have no `MOCK_MENTORS` entries yet for
-the same reason.
+`accounting` and `business-acquisition` have unique art but it isn't the
+blank-frame pattern either (a fully-rendered office scene each), so they
+get the same zeroed-mentor/practice-test/application/refer, mirror-only
+treatment as the shared tech room. Both were supplied at 1402x1122
+rather than the usual 1536x1024 canvas, so `PathwayRoomArt` grew optional
+`imageWidth`/`imageHeight` fields the page reads before falling back to
+1536x1024 — without them the browser stretches the image to the wrong
+aspect ratio. `business-acquisition`'s render also bakes in its own
+"RETURN TO HALL" graphic; `returnToHallway` overlays a real link on it.
+
+`attorney` and `stock-trading` *do* follow the blank-frame pattern —
+`attorney` has 6 blank mentor frames ("Mentors Who Built The Path") and
+one large circular mirror; `stock-trading` has 6 blank mentor frames
+split into two walls of 3 ("Mentors Who Mastered The Markets" /
+"Mentors Who Built The Path") and, unusually, *two* mirrors flanking the
+central NYSE display — both are equally valid, so `PathwayRoomArt` grew
+an optional `additionalMirrors: RoomSlot[]` and the page renders every
+one of them with the same "Begin Interview" behavior. Neither has blank
+practice-test/application/refer frames, so those stay zeroed out the
+same way as the other non-standard rooms.
+
+`advertiser` has no `pathwayRooms.ts` entry and falls back to a plain
+CSS info page (icon, atmosphere copy, intake link) — no unique art
+exists for it yet, and per §2 it currently has no hallway door or lobby
+item either. `accounting`, `attorney`, `business-acquisition`, and
+`stock-trading` have no `MOCK_MENTORS` entries yet, so their mentor
+frames (where they have any) render as empty slots until mentors tagged
+with those specialties are added.
 
 `/mentors` is the analogous "gallery" for the Mentorship nav tab —
 currently a CSS grid of every `MOCK_MENTORS` entry as a frame, linking
