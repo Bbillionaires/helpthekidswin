@@ -209,6 +209,33 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
           </Link>
         ))}
 
+        {/* Rooms shared by more than one pathway (e.g. Technology) render
+            the OTHER pathways' own gateways too, each linking straight to
+            that specific pathway's intake — so every gateway is visible
+            no matter which of the shared pathways you're on. */}
+        {room.crossPathwayMirrors?.map((slot, i) => {
+          const otherPathway = getPathway(slot.pathwaySlug);
+          return (
+            <Link
+              key={i}
+              href={`/pathways/${slot.pathwaySlug}/intake`}
+              title={otherPathway ? `Begin Interview — ${otherPathway.name}` : "Begin Your Interview"}
+              className="group absolute flex items-center justify-center rounded-sm transition"
+              style={{
+                top: `${slot.top}%`,
+                left: `${slot.left}%`,
+                width: `${slot.width}%`,
+                height: `${slot.height}%`,
+              }}
+            >
+              <span className="absolute inset-0 rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
+              <span className="relative px-1 text-center font-display text-xs font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
+                {otherPathway?.name ?? "Begin Interview"}
+              </span>
+            </Link>
+          );
+        })}
+
         {/* Some art bakes in its own "return to hall" graphic — overlay a real link on it */}
         {room.returnToHallway && (
           <Link

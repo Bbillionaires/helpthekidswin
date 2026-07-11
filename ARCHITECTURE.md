@@ -272,16 +272,24 @@ each frame through `resolveFrameMentorId`/`isFrameClickable` before
 falling back to the default positional mentor — same limitation as the
 rest of `src/data/mock.ts` (in-memory, resets on restart).
 
-The Technology lobby's shared room (`room-ai-architect.png`) uses the
-desk globe as AI Architect's primary mirror/interview hotspot (moved off
-the standing side panel, which was harder to notice). Cybersecurity and
-Web Development & Programming keep their own primary mirrors too (the
-floor console and the wall of screens, respectively), but the globe is
-also wired onto both of them as an `additionalMirrors` entry
-(`TECH_ROOM_GLOBE` in `pathwayRooms.ts`) — since it's genuinely one
-shared room, not three separate ones, the globe works as a consistent
-"Begin Interview" landmark no matter which of the three doors got you
-in, always leading to whichever pathway you're actually in.
+The Technology lobby's shared room (`room-ai-architect.png`) renders
+**four** gateways on every one of its three pathway pages, not just
+whichever one you arrived through: each pathway's own dedicated landmark
+(the floor console for Cybersecurity, the wall of screens for Web
+Development & Programming, the standing side panel for AI Architect —
+`TECH_GATEWAY_POSITIONS` in `pathwayRooms.ts`) plus the desk globe, which
+is shared by all three (`TECH_ROOM_GLOBE`, wired as an `additionalMirrors`
+entry on each). The other two pathways' landmarks render too, via a new
+`crossPathwayMirrors` field on `PathwayRoomArt` — each entry pairs a
+position with an explicit `pathwaySlug`, so e.g. the Cybersecurity page
+also shows the wall-of-screens and standing-panel hotspots, each linking
+straight to Web Development & Programming's or AI Architect's own
+`/intake`, never to another room page. `techCrossPathwayMirrors(slug)`
+generates these automatically from `TECH_GATEWAY_POSITIONS` so all three
+entries can't drift out of sync with each other. Net effect: land on any
+one of the three technology pathways and all four gateways — three
+career-specific landmarks plus the globe — are visible and clickable,
+each going straight to that specific pathway's questions.
 
 The **Practice Library** (`/library`) is a fourth top-level room concept,
 reachable from the Navbar, rendering real reference art
