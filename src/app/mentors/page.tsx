@@ -9,7 +9,7 @@ export default function MentorsHallPage() {
   return (
     <>
       <Navbar />
-      <main className="relative min-h-screen overflow-hidden bg-hallway-void px-4 py-12">
+      <main className="relative overflow-hidden bg-hallway-void px-3 py-6 sm:px-4 sm:py-12">
       <HallwayBackdrop />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-2 text-center">

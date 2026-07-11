@@ -565,6 +565,51 @@ The page is explicit that it is not legal advice and hasn't been reviewed
 by an attorney — that review is still a prerequisite before this
 platform handles real minors' data in production.
 
+## 7b. Mobile layout fixes
+
+Two real bugs were found and fixed after a report of "a lot of black
+area throughout every page" on mobile:
+
+1. **The Navbar was invisible on `/` and `/mentors`.** Both pages render
+   `<HallwayBackdrop />` (a `position: fixed` decorative layer with a
+   fully opaque base gradient) inside `<main>`. Per CSS stacking rules,
+   any positioned element (fixed/absolute/relative) paints *above*
+   normal-flow, non-positioned content, regardless of DOM order —
+   `<header>` (the Navbar) had no `z-index` at all, so it fell into the
+   normal-flow paint layer beneath the backdrop's positioned layer and
+   was fully covered. This wasn't mobile-specific — it happened on any
+   viewport — but it disproportionately reads as "a giant empty black
+   header" on a narrow phone screen where the nav is the first thing you
+   see. Fixed with `relative z-20` on the `<header>` in `Navbar.tsx`,
+   which is now high enough to sit above any per-page decorative
+   backdrop by default.
+2. **Several pages force-stretched the page to `min-h-screen` (or the
+   `<body>` did) even when their real content was much shorter than one
+   viewport height** — mobile viewports are taller relative to width
+   than desktop, so this showed up as a large *scrollable* dead zone of
+   pure background below short content (measured directly: a page whose
+   real content was 437px tall was still forced to a 664px scrollable
+   height, a 227px dead zone that added nothing when scrolled into).
+   Removed `min-h-screen` from `<body>` (`layout.tsx`) and from every
+   page `<main>` that doesn't use it for intentional vertical centering
+   of a compact form (login/register/intake/forgot-password/unauthorized
+   keep it, since centering a small card within *some* height is the
+   point there). Also tightened `py-16`/`py-12` to responsive
+   `py-8 sm:py-16` / `py-6 sm:py-12` on text-heavy pages (About,
+   Resources, Policy, mentor detail, recommendation, practice test) so
+   mobile doesn't carry the same generous desktop padding.
+
+**What's left, and isn't a bug**: pathway rooms and lobbies render a
+fixed 1536×1024 landscape image full-width. On a narrow, tall mobile
+viewport that image renders proportionally much shorter relative to the
+screen than it does on desktop, so there's still visible black space
+below the image + caption text on first load — that's the same
+"landscape photo on a portrait phone screen" effect any site with wide
+hero images has, not a layout defect, and fixing it for real would mean
+a genuinely different mobile-specific treatment (a cropped/vertical
+image variant, or a different layout entirely for narrow viewports) —
+a design decision, not a one-line fix.
+
 ## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
 
 - **Identity**: see §7 — the demo/in-memory credential store is the main

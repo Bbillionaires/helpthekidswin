@@ -30,7 +30,7 @@ export default async function RecommendationPage({ params }: { params: { slug: s
   const pickedPathway = getPathway(result.picked.pathwaySlug);
 
   return (
-    <main className="min-h-screen bg-hallway-void px-6 py-16">
+    <main className="bg-hallway-void px-4 py-8 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-2xl">
         <h1 className="mb-2 text-center font-display text-3xl font-bold text-white">
           Your Fit Assessment

@@ -38,7 +38,7 @@ function HomeContent() {
   const setWelcomed = (value: boolean) => setEnteredManually(value);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-hallway-void px-3 py-6">
+    <main className="relative overflow-hidden bg-hallway-void px-3 py-6">
       <HallwayBackdrop />
 
       <AnimatePresence mode="wait">

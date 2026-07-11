@@ -34,7 +34,7 @@ export default function PracticeTestPage({ params }: { params: { slug: string } 
   const readiness = Math.round((answeredCount / QUESTIONS.length) * 100);
 
   return (
-    <main className="min-h-screen bg-hallway-void px-6 py-12">
+    <main className="bg-hallway-void px-4 py-6 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <p className="text-xs uppercase tracking-widest text-hallway-gold">{pathway.name}</p>
         <h1 className="mt-1 font-display text-3xl font-bold text-white">Practice Test</h1>

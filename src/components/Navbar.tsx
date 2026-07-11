@@ -23,7 +23,7 @@ export async function Navbar() {
   const role = session?.user?.role;
 
   return (
-    <header className="border-b border-white/10 bg-hallway-void/95 text-white backdrop-blur">
+    <header className="relative z-20 border-b border-white/10 bg-hallway-void/95 text-white backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
         <Link href="/" className="flex flex-col leading-tight">
           <span className="font-display text-lg font-semibold">

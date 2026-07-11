@@ -57,7 +57,7 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
   }
 
   return (
-    <main className="min-h-screen bg-hallway-void px-3 py-6">
+    <main className="bg-hallway-void px-3 py-6">
       <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border border-hallway-gold/30 shadow-2xl">
         <Image
           src={room.image}
