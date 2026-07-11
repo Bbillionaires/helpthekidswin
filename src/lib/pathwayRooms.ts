@@ -30,8 +30,10 @@ export interface PathwayRoomArt {
   applicationFrame: RoomSlot;
   referFrame: RoomSlot;
   mirror: RoomSlot;
-  /** A handful of rooms render more than one literal mirror (e.g. flanking a central display) — each is an equally valid "begin interview" click, leading to *this* pathway's own intake. */
-  additionalMirrors?: RoomSlot[];
+  /** Hover label for the primary `mirror` — defaults to "Begin Interview" when omitted. Override when a room has more than one distinct interview landmark and they need to read differently from one another (e.g. the Technology room). */
+  mirrorLabel?: string;
+  /** A handful of rooms render more than one literal mirror (e.g. flanking a central display) — each is an equally valid "begin interview" click, leading to *this* pathway's own intake. Each slot can carry its own hover label (defaults to "Begin Interview"). */
+  additionalMirrors?: Array<RoomSlot & { label?: string }>;
   /** For rooms shared by more than one pathway (e.g. the Technology lobby's three careers): the OTHER pathways' own gateways, rendered on this page too so every gateway is visible no matter which of the shared pathways you're on — each leads straight to that specific pathwaySlug's own intake, not to another room page. */
   crossPathwayMirrors?: Array<RoomSlot & { pathwaySlug: string }>;
   /** Some art bakes in its own "return to hall" graphic — overlay a real link on it when present. */
@@ -53,9 +55,11 @@ function evenRow(left: number, right: number, count: number, top: number, height
 const NO_FRAME: RoomSlot = { top: 0, left: 0, width: 0, height: 0 };
 
 // The desk globe in room-ai-architect.png — a fourth, always-present
-// "Begin Interview" gateway shared by all three Technology-lobby
-// pathways, on top of each one's own dedicated landmark below.
-const TECH_ROOM_GLOBE: RoomSlot = { top: 45, left: 67.5, width: 7, height: 13 };
+// "Interview" gateway shared by all three Technology-lobby pathways, on
+// top of each one's own dedicated landmark below. Labeled plainly
+// "Interview" (rather than the default "Begin Interview") so it reads
+// distinctly from the pathway's own landmark sitting right next to it.
+const TECH_ROOM_GLOBE: RoomSlot & { label: string } = { top: 45, left: 67.5, width: 7, height: 13, label: "Interview" };
 
 // Each Technology-lobby pathway's own dedicated gateway landmark in the
 // shared room render — the floor console, the wall of screens, the
@@ -103,6 +107,7 @@ export const PATHWAY_ROOM_ART: Record<string, PathwayRoomArt> = {
     applicationFrame: NO_FRAME,
     referFrame: NO_FRAME,
     mirror: TECH_GATEWAY_POSITIONS["web-development-programming"],
+    mirrorLabel: "Web Development & Programming",
     additionalMirrors: [TECH_ROOM_GLOBE],
     crossPathwayMirrors: techCrossPathwayMirrors("web-development-programming"),
   },

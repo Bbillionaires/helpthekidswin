@@ -173,7 +173,7 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
         {/* The mirror — first click for a new applicant */}
         <Link
           href={`/pathways/${pathway.slug}/intake`}
-          title="Begin Your Interview"
+          title={room.mirrorLabel ?? "Begin Your Interview"}
           className="group absolute flex items-center justify-center rounded-sm transition"
           style={{
             top: `${room.mirror.top}%`,
@@ -183,8 +183,8 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
           }}
         >
           <span className="absolute inset-0 rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
-          <span className="relative font-display text-sm font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
-            Begin Interview
+          <span className="relative px-1 text-center font-display text-sm font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
+            {room.mirrorLabel ?? "Begin Interview"}
           </span>
         </Link>
 
@@ -193,7 +193,7 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
           <Link
             key={i}
             href={`/pathways/${pathway.slug}/intake`}
-            title="Begin Your Interview"
+            title={slot.label ?? "Begin Your Interview"}
             className="group absolute flex items-center justify-center rounded-sm transition"
             style={{
               top: `${slot.top}%`,
@@ -203,8 +203,8 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
             }}
           >
             <span className="absolute inset-0 rounded-sm ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-2 group-hover:ring-hallway-gold/70" />
-            <span className="relative font-display text-sm font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
-              Begin Interview
+            <span className="relative px-1 text-center font-display text-sm font-semibold uppercase tracking-widest text-white opacity-0 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)] transition group-hover:opacity-100">
+              {slot.label ?? "Begin Interview"}
             </span>
           </Link>
         ))}
