@@ -599,16 +599,27 @@ area throughout every page" on mobile:
    Resources, Policy, mentor detail, recommendation, practice test) so
    mobile doesn't carry the same generous desktop padding.
 
-**What's left, and isn't a bug**: pathway rooms and lobbies render a
-fixed 1536×1024 landscape image full-width. On a narrow, tall mobile
-viewport that image renders proportionally much shorter relative to the
-screen than it does on desktop, so there's still visible black space
-below the image + caption text on first load — that's the same
-"landscape photo on a portrait phone screen" effect any site with wide
-hero images has, not a layout defect, and fixing it for real would mean
-a genuinely different mobile-specific treatment (a cropped/vertical
-image variant, or a different layout entirely for narrow viewports) —
-a design decision, not a one-line fix.
+**The remaining gap, and why it isn't cropped away**: pathway rooms,
+lobbies, and the home page all render a fixed 1536×1024 landscape image
+full-width. On a narrow, tall mobile viewport that image is
+proportionally much shorter relative to the screen than on desktop, so
+there's real empty space below the image on first load no matter how
+padding is tuned. The image can't be switched to `object-fit: cover`
+(crop-to-fill) to close that gap because every clickable hotspot on
+every one of these pages — mentor frames, doors, mirrors, lobby items —
+is a percent-based coordinate measured against the *full, uncropped*
+image; cropping would silently misalign all of them, differently on
+every device's aspect ratio. Instead of fighting that, real content now
+fills the space below the fold on every affected page: a "Choose a Door
+/ Prove Your Fit / Meet Your Mentor" explainer strip on the home page
+(both the exterior welcome and interior hallway states — see
+`HowItWorks` in `src/app/page.tsx`), a "What to Expect" (physical
+demand + tags) and "Getting Started" (requirements) pair of cards on
+every pathway room using data already on `CareerPathway` that nothing
+displayed before, and an "Inside This Door" list of real links on every
+image-based lobby. This was verified to actually close the gap with
+full-page (not just viewport) mobile screenshots, not just reasoned
+about.
 
 ## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
 

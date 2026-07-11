@@ -87,6 +87,27 @@ export default async function LobbyPage({ params }: { params: { slug: string } }
           Back to the Hallway
         </Link>
       </div>
+
+      {lobby.image && (
+        <div className="mx-auto mt-10 max-w-3xl">
+          <p className="text-center text-xs uppercase tracking-widest text-hallway-gold">
+            Inside this door
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {lobby.items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group rounded-xl border border-white/10 bg-white/5 px-5 py-4 text-center transition hover:border-hallway-gold/60 hover:bg-hallway-gold/10"
+              >
+                <span className="font-display text-base font-bold uppercase tracking-wide text-hallway-gold">
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

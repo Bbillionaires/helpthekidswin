@@ -16,6 +16,28 @@ import {
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
 import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
+const HOW_IT_WORKS = [
+  { icon: "🚪", title: "Choose a Door", body: "Pick the career pathway that speaks to you — there's no wrong door." },
+  { icon: "🎓", title: "Prove Your Fit", body: "A short profile, then a real interview at the mirror, tailored to that career." },
+  { icon: "🤝", title: "Meet Your Mentor", body: "Get matched with someone who's already built the career you want." },
+];
+
+function HowItWorks() {
+  return (
+    <div className="mt-10 grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+      {HOW_IT_WORKS.map((step) => (
+        <div key={step.title} className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
+          <span className="text-3xl">{step.icon}</span>
+          <p className="mt-2 font-display text-sm font-semibold uppercase tracking-wide text-hallway-gold">
+            {step.title}
+          </p>
+          <p className="mt-1 text-sm text-white/60">{step.body}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <Suspense fallback={<main className="min-h-screen bg-hallway-void" />}>
@@ -148,6 +170,8 @@ function HomeContent() {
             >
               Enter a New Career
             </motion.button>
+
+            <HowItWorks />
           </motion.div>
         ) : (
           <motion.div
@@ -207,6 +231,8 @@ function HomeContent() {
                 </p>
               </div>
             </div>
+
+            <HowItWorks />
           </motion.div>
         )}
       </AnimatePresence>

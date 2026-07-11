@@ -52,6 +52,28 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
         <Link href="/?entered=1" className="text-sm text-white/50 hover:text-white">
           Back to the Hallway
         </Link>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <span className="rounded-full border border-white/15 px-3 py-1 text-xs capitalize text-white/70">
+            {pathway.physicalDemand} physical demand
+          </span>
+          {pathway.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/15 px-3 py-1 text-xs capitalize text-white/70"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <ul className="mt-2 max-w-md space-y-1.5 text-left text-sm text-white/70">
+          {pathway.requirements.map((req) => (
+            <li key={req} className="flex gap-2">
+              <span className="text-hallway-gold">•</span>
+              {req}
+            </li>
+          ))}
+        </ul>
       </main>
     );
   }
@@ -265,6 +287,36 @@ export default async function PathwayRoomPage({ params }: { params: { slug: stri
         >
           Back to the Hallway
         </Link>
+      </div>
+
+      <div className="mx-auto mt-10 grid max-w-6xl gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+          <p className="text-xs uppercase tracking-widest text-hallway-gold">What to expect</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full border border-white/15 px-3 py-1 text-xs capitalize text-white/70">
+              {pathway.physicalDemand} physical demand
+            </span>
+            {pathway.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-white/15 px-3 py-1 text-xs capitalize text-white/70"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+          <p className="text-xs uppercase tracking-widest text-hallway-gold">Getting started</p>
+          <ul className="mt-3 space-y-1.5 text-sm text-white/70">
+            {pathway.requirements.map((req) => (
+              <li key={req} className="flex gap-2">
+                <span className="text-hallway-gold">•</span>
+                {req}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </main>
   );
