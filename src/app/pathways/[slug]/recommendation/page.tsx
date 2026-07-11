@@ -1,35 +1,33 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import type { RecommendationResult } from "@/lib/ai/recommend";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { getApplicantByUserId } from "@/data/mock";
+import { generatePathwayRecommendations } from "@/lib/ai/recommend";
 import { getPathway } from "@/lib/pathways";
-import { INTAKE_STORAGE_KEY } from "@/lib/ai/session";
 
-export default function RecommendationPage() {
-  const router = useRouter();
-  const [result, setResult] = useState<RecommendationResult | null>(null);
-
-  useEffect(() => {
-    // The score is computed server-side by /api/intake/submit (so it can be
-    // persisted to the applicant's profile) and handed off here via
-    // sessionStorage — a placeholder for a real server-side session, see
-    // ARCHITECTURE.md.
-    const raw = sessionStorage.getItem(INTAKE_STORAGE_KEY);
-    if (raw) setResult(JSON.parse(raw));
-  }, []);
-
-  if (!result) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-hallway-void text-white/60">
-        Analyzing your answers...
-      </main>
-    );
+export default async function RecommendationPage({ params }: { params: { slug: string } }) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect(`/register?callbackUrl=${encodeURIComponent(`/pathways/${params.slug}/recommendation`)}`);
   }
 
+  const applicant = getApplicantByUserId(session.user.id);
+  // The score itself is computed and re-derivable from the raw answers
+  // (generatePathwayRecommendations is a pure function of responses +
+  // pathwaySlug) — so the applicant's own persisted assessment is the
+  // source of truth here, not a client-side handoff. That means a
+  // refresh, a direct link, or opening this page in a new tab all work
+  // correctly, unlike the sessionStorage-based version this replaced.
+  const assessment = applicant?.assessments
+    .filter((a) => a.pathwaySlug === params.slug)
+    .at(-1);
+
+  if (!assessment?.responses) {
+    redirect(`/pathways/${params.slug}/intake`);
+  }
+
+  const result = generatePathwayRecommendations(assessment.responses, params.slug);
   const pickedPathway = getPathway(result.picked.pathwaySlug);
-  const topAlternate = result.alternates[0];
 
   return (
     <main className="min-h-screen bg-hallway-void px-6 py-16">
@@ -66,14 +64,12 @@ export default function RecommendationPage() {
             ))}
             {result.picked.eligible && (
               <div className="mt-4 flex flex-wrap gap-3">
-                <button
-                  onClick={() =>
-                    router.push(`/apply/profile?pathway=${result.picked.pathwaySlug}`)
-                  }
+                <Link
+                  href={`/apply/profile?pathway=${result.picked.pathwaySlug}`}
                   className="rounded-full bg-hallway-gold px-6 py-2 font-semibold text-hallway-void transition hover:brightness-110"
                 >
                   Lock This Door
-                </button>
+                </Link>
                 <Link
                   href="/?entered=1"
                   className="rounded-full border border-white/30 px-6 py-2 font-semibold text-white transition hover:bg-white/10"
@@ -88,7 +84,7 @@ export default function RecommendationPage() {
         {result.alternates.length > 0 && (
           <>
             <p className="mb-3 mt-8 text-center text-sm uppercase tracking-widest text-white/40">
-              {topAlternate && topAlternate.confidence * 100 > result.picked.fitScore
+              {result.alternates[0] && result.alternates[0].confidence * 100 > result.picked.fitScore
                 ? "A stronger fit — and a contingency worth considering"
                 : "Other doors worth exploring as a contingency"}
             </p>
@@ -116,12 +112,12 @@ export default function RecommendationPage() {
                     </div>
                     <p className="mb-4 text-sm text-white/70">{rec.explanation}</p>
                     {rec.rank === 1 && (
-                      <button
-                        onClick={() => router.push(`/apply/profile?pathway=${pathway.slug}`)}
-                        className="rounded-full border border-hallway-gold/50 px-6 py-2 font-semibold text-hallway-gold transition hover:bg-hallway-gold/10"
+                      <Link
+                        href={`/apply/profile?pathway=${pathway.slug}`}
+                        className="inline-block rounded-full border border-hallway-gold/50 px-6 py-2 font-semibold text-hallway-gold transition hover:bg-hallway-gold/10"
                       >
                         Consider This Instead
-                      </button>
+                      </Link>
                     )}
                   </div>
                 );

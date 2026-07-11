@@ -367,12 +367,22 @@ it's actually used.
    is why registration (§2a) happens before intake: without a signed-in
    applicant, an interview still scores and displays normally, it just has
    nowhere durable to land.
-4. `/pathways/[slug]/recommendation` reads the `RecommendationResult`
-   back out of `sessionStorage` (a placeholder for a real server-side
-   session — see §8) and renders the picked door's fit score plus the
-   alternates, always framed as advisory ("Lock This Door" / "Explore
-   Another Door" / "Consider This Instead") — the recommendation engine
-   must never auto-select a pathway for the applicant.
+4. `/pathways/[slug]/recommendation` is a server component — it doesn't
+   receive the `RecommendationResult` handed to it by `/intake` at all.
+   Instead it looks up the applicant's own most recent `AssessmentResult`
+   for this `pathwaySlug` and re-runs `generatePathwayRecommendations`
+   against its persisted `responses` (a pure function of responses +
+   slug, so this always reproduces the exact same result). This replaced
+   an earlier `sessionStorage` handoff that only worked for the one
+   client that just submitted the intake — a refresh, a direct link, or
+   opening the URL in a new tab all showed "Analyzing your answers..."
+   forever, since nothing was ever in `sessionStorage` to read. Renders
+   the picked door's fit score plus the alternates, always framed as
+   advisory ("Lock This Door" / "Explore Another Door" / "Consider This
+   Instead") — the recommendation engine must never auto-select a
+   pathway for the applicant. If no assessment exists yet for this
+   pathway (e.g. someone navigates here without having taken the
+   interview), it redirects back to `/intake`.
 
 ## 3a. Certificates
 
@@ -571,12 +581,6 @@ platform handles real minors' data in production.
   shapes in `src/types/index.ts` already mirror the Prisma models. This
   also unblocks per-user authorization (e.g. a mentor should only see
   their own matches, not just any role-gated route).
-- **Intake session**: `sessionStorage` is a placeholder for passing the
-  already-computed `RecommendationResult` from `/intake` to
-  `/recommendation` (the score itself is computed and persisted
-  server-side in `/api/intake/submit` — see §3 — this is just the
-  same-request UI handoff); move this server-side too once a real session
-  exists.
 - **LLM integration**: see §3 — `generatePathwayRecommendations` and the
   AI guide's conversational turns beyond the fixed welcome script are the
   two seams intended for a real model call.

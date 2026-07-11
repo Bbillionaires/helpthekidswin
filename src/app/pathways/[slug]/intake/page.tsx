@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getIntakeQuestions, type IntakeResponse } from "@/lib/ai/guide";
-import { INTAKE_STORAGE_KEY } from "@/lib/ai/session";
 
 export default function IntakePage({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -26,13 +25,11 @@ export default function IntakePage({ params }: { params: { slug: string } }) {
         questionId: q.id,
         answer: responses[q.id] ?? "",
       }));
-      const res = await fetch("/api/intake/submit", {
+      await fetch("/api/intake/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pathwaySlug: params.slug, responses: payload }),
       });
-      const result = await res.json();
-      sessionStorage.setItem(INTAKE_STORAGE_KEY, JSON.stringify(result));
       router.push(`/pathways/${params.slug}/recommendation`);
       return;
     }
