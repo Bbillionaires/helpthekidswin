@@ -447,6 +447,21 @@ and a single Credentials provider. The session's `role` field
 `/login?callbackUrl=...` and wrong-role requests to `/unauthorized` for
 every path under `/admin`, `/mentor`, `/apply`, and `/workspace`.
 
+`trustHost: true` is set explicitly rather than relying on Auth.js's
+automatic per-platform detection (it only auto-trusts the request host
+in production when it recognizes the hosting platform itself, e.g. via
+Vercel's own env vars, or when `AUTH_URL`/`NEXTAUTH_URL` is set — this
+project sets neither). Without it, every sign-in/session request in a
+production build throws `UntrustedHost` and fails silently: no session
+cookie is ever set, so `auth()` returns null everywhere, which surfaces
+as seemingly unrelated bugs throughout the app — room pages endlessly
+redirecting to `/register`, "Back to the Hallway" links behaving
+strangely, hotspots that look wired up doing nothing — because the
+person clicking them was never actually signed in. This was found and
+fixed after exactly that kind of report; if navigation ever looks broken
+again in a way the code doesn't explain, check for `UntrustedHost` in
+server logs first.
+
 **This is demo-grade, not production-grade.** `src/lib/auth/users.ts` seeds
 four hardcoded demo accounts (one per role) into an in-memory
 `REGISTERED_USERS` array — the same array `/register` (§2a) pushes new

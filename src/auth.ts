@@ -5,6 +5,16 @@ import { findDemoUser } from "@/lib/auth/users";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
+  // Auth.js only auto-trusts the request host in production on platforms
+  // it can detect itself (e.g. Vercel, via its own env vars) or when
+  // AUTH_URL/NEXTAUTH_URL is set — neither of which this project
+  // configures. Without this, every sign-in/session request in
+  // production throws "UntrustedHost" and silently fails: no session
+  // cookie ever gets set, so `auth()` returns null everywhere, which
+  // looks like broken navigation/gating throughout the app even though
+  // nothing else is wrong. Safe here because this app isn't multi-tenant
+  // and doesn't do host-based routing.
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
