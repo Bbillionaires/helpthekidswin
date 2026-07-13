@@ -1,6 +1,7 @@
 import { Dancing_Script } from "next/font/google";
 import type { Certificate as CertificateData } from "@/types";
 import type { CareerPathway } from "@/lib/pathways";
+import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
 // A self-hosted script font for the orchestrator's signature — the CSS
 // generic "cursive" family has no reliable fallback on many systems
@@ -50,11 +51,11 @@ export function Certificate({
         <div>
           <p className={`${signatureFont.className} text-4xl text-hallway-gold`}>De&apos;Aris Henry</p>
           <p className="mt-1 text-[10px] uppercase tracking-widest text-white/50">
-            Orchestrator, Help the Kids Win
+            Orchestrator, {FLAGSHIP_INITIATIVE.name}
           </p>
         </div>
         <p className="text-[10px] italic text-white/50">
-          Powered by Greenwood 100Inc and Help The Kids Win
+          Powered by Greenwood 100Inc and {FLAGSHIP_INITIATIVE.name}
         </p>
       </div>
     </div>

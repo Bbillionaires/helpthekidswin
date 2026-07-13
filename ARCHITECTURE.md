@@ -7,7 +7,7 @@ never require a fork or a rewrite:
 
 ```
 Organization  (Help the World Win)
- └─ Initiative (Help the Kids Win, Help Veterans Win, ...)
+ └─ Initiative (Hall of Opportunity, Help Veterans Win, ...)
      └─ Pathway (Merchant Marine, Cybersecurity, ...)
 ```
 
@@ -620,6 +620,14 @@ displayed before, and an "Inside This Door" list of real links on every
 image-based lobby. This was verified to actually close the gap with
 full-page (not just viewport) mobile screenshots, not just reasoned
 about.
+
+3. **A "Powered by {initiative}" overlay div sat on top of the home
+   page's exterior/interior images and overlapped, on mobile, with the
+   same "Powered by Help the World Win" text already baked into the
+   `mansion-exterior.png` / `hall-of-opportunity-interior.png` art
+   itself.** Removed both overlay `<div>`s from `src/app/page.tsx` —
+   the text is already present in the image, so nothing rendered on top
+   of it is needed.
 
 ## 8. Known scaffolding gaps (intentional, documented here rather than hidden)
 

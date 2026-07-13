@@ -14,7 +14,6 @@ import {
   EXTERIOR_ENTER_BUTTON_HOTSPOT,
 } from "@/lib/exteriorHotspots";
 import { GUIDE_WELCOME_MESSAGE } from "@/lib/ai/guide";
-import { FLAGSHIP_INITIATIVE } from "@/lib/organization";
 
 const HOW_IT_WORKS = [
   { icon: "🚪", title: "Choose a Door", body: "Pick the career pathway that speaks to you — there's no wrong door." },
@@ -153,12 +152,6 @@ function HomeContent() {
               >
                 <span className="block h-full w-full rounded ring-0 ring-hallway-gold/0 transition group-hover:bg-hallway-gold/10 group-hover:ring-1 group-hover:ring-hallway-gold/70" />
               </button>
-
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">
-                <p className="font-display text-sm italic text-hallway-gold sm:text-base">
-                  Powered by {FLAGSHIP_INITIATIVE.name}
-                </p>
-              </div>
             </div>
 
             <motion.button
@@ -224,12 +217,6 @@ function HomeContent() {
                   </span>
                 </Link>
               ))}
-
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-hallway-void/90 to-transparent py-3 text-center">
-                <p className="font-display text-sm italic text-hallway-gold sm:text-base">
-                  Powered by {FLAGSHIP_INITIATIVE.name}
-                </p>
-              </div>
             </div>
 
             <HowItWorks />

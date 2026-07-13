@@ -28,8 +28,8 @@ export const PARENT_ORGANIZATION = {
 
 export const INITIATIVES: Initiative[] = [
   {
-    slug: "help-the-kids-win",
-    name: "Help the Kids Win",
+    slug: "hall-of-opportunity",
+    name: "Hall of Opportunity",
     tagline: "Powered by Help the World Win",
     status: "flagship",
     focus:
